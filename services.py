@@ -39,8 +39,6 @@ class PolygonInteracter:
 
         r1 = self.s.post(BASE_URL + '/login', data=data, params=params, allow_redirects=False)
 
-        print(r1.status_code)
-
         if r1.status_code != 302:
             return False
 
