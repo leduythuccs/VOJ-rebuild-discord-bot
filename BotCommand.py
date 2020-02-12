@@ -1,18 +1,18 @@
 from discord.ext import commands
 import os
 import services
+import json 
 
 class BotCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.interator = services.PolygonInteracter(None, None)
-        self.un_complete = []
-    @commands.Cog.listener()
-    async def on_ready(self):
         username = os.getenv('POLYGON_USERNAME')
         password = os.getenv('POLYGON_PASSWORD')
-        print(username, password)
-        self.interator = services.PolygonInteracter(username, password)
+        api_key = os.getenv('POLYGON_API_KEY')
+        api_secret = os.getenv('POLYGON_API_SECRET')
+        self.interator = services.PolygonInteracter(username, password, api_key, api_secret)
+        self.un_complete = []
+        self.problem_name_to_id = json.load(open("list_problems.json", "r"))
     
 
     @commands.command(brief="Check if bot is still alive")
@@ -39,26 +39,34 @@ class BotCommand(commands.Cog):
         await ctx.send(message)
 
 
-    @commands.command(brief="Give permission access", usage="[problems] [username]")
-    async def give(self, ctx, problem_set, username):
+    @commands.command(brief="Give permission access", usage="[problems] [username1] [username2] [username3] ...")
+    async def give(self, ctx, problem_set, *args):
         """Give permission access of problem(s),
         Currently, "problems" can be: a single name or a problem set
         """
         path = "problem_set/" + problem_set + ".txt"
+        username = args
         problems = []
         if (os.path.exists(path)):
             problems = list(map(lambda x: x.strip('\n'), open(path, "r").readlines()))
         else:
             problems = [problem_set]
+
         self.un_complete = []
         await ctx.send("Doing " + str(len(problems)) + " problems, it might takes a couple of minutes")
         for p in problems:
-            if self.interator.give_access(p, username) == False:
+            p = p.upper()
+            if (p not in self.problem_name_to_id):
                 self.un_complete.append(p)
+            else:
+                problem_id = self.problem_name_to_id[p]
+                print("problem id = {0}, problem name = {1}".format(problem_id, p))
+                self.interator.give_access(problem_id, username)
 
-        message = "Successfully gave {0} problem(s) to user `{1}` \n".format(len(problems) - len(self.un_complete), username)
-        message += "Failed {0} problem(s) \n".format(len(self.un_complete))
-        message += "Using `failed` command to see failed list."
+        message = "Successfully gave {0} problem(s) to user(s) `{1}`".format(len(problems) - len(self.un_complete), username)
+        if (len(self.un_complete) > 0):
+            message += "\nFailed {0} problem(s) \n".format(len(self.un_complete))
+            message += "Using `failed` command to see failed list."
         await ctx.send(message)
 
 

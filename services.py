@@ -86,7 +86,7 @@ class PolygonInteracter:
     def get_problem_list(self):
         return self.request_official('problems.list').json()['result']
 
-    def give_access(self, problem_id, usernames, permission='WRITE', session=None):
+    def give_access(self, problem_id, usernames, permission='Write', session=None):
         # give username permission to problem 
 
         data = {
@@ -98,5 +98,5 @@ class PolygonInteracter:
         }
 
         r = self.request_unofficial('access', data=data, params={'action': 'add'}, method='POST')
-
+        
         return 'location' in r.headers and 'access' in r.headers['location']

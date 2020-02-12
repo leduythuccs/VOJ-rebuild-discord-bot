@@ -7,8 +7,6 @@ os.chdir(current_path)
 load_dotenv()
 
 token = os.getenv('DISCORD_TOKEN')
-username = os.getenv('POLYGON_USERNAME')
-password = os.getenv('POLYGON_PASSWORD')
 
 # bot 
 bot = commands.Bot(command_prefix='$')
