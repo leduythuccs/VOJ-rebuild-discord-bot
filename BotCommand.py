@@ -77,12 +77,12 @@ class BotCommand(commands.Cog):
                     self.log(p + ": failed when interact with polygon")
             count_done += 1
             if (count_done % 10 == 0):
-                current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
+                await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
 
         message = "Successfully gave {0} problem(s) to user(s) `{1}`".format(total_problem - count_failed_problem, username)
         if (count_failed_problem > 0):
             message += "\nFailed {0} problem(s). ".format(count_failed_problem)
-            message += "Using `failed` command with query id = {0} to see failed list.".format(self.id_query)
+            message += "Using `getlog` command with query id = {0} to see failed list.".format(self.id_query)
             self.id_query += 1
             open("botlogs/failed_" + str(self.id_query) + ".log", "w")
         
@@ -98,6 +98,9 @@ class BotCommand(commands.Cog):
             return
 
         with open("botlogs/failed_" + str(query_id) + ".log", "r") as logfile: message = logfile.read()
+        if (len(message) == 0):
+            await ctx.send("Query " + str(query_id) +" not found")
+
         paginator.paginate(self.bot, ctx, message, "Query " + str(query_id) + "'s failed list:")
     
 
