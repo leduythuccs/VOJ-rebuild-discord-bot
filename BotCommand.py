@@ -2,6 +2,7 @@ from discord.ext import commands
 import os
 import services
 import json 
+from helper import paginator
 
 class BotCommand(commands.Cog):
     def __init__(self, bot):
@@ -59,12 +60,12 @@ class BotCommand(commands.Cog):
 
         count_failed_problem = 0
         total_problem = len(problems)
+
         await ctx.send("Doing " + str(total_problem) + " problems, it might takes a couple of minutes")
         current_message = await ctx.send("0/" + str(total_problem))
         count_done = 0
+
         for p in problems:
-            if (count_done > total_problem / 2) or (count_done % 10 == 0):
-                current_message.edit(content=str(count_done) + "/" + str(total_problem))
             p = p.upper()
             if (p not in self.problem_name_to_id):
                 count_failed_problem += 1
@@ -75,6 +76,9 @@ class BotCommand(commands.Cog):
                     count_failed_problem += 1
                     self.log(p + ": failed when interact with polygon")
             count_done += 1
+            if (count_done % 10 == 0):
+                current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
+
         message = "Successfully gave {0} problem(s) to user(s) `{1}`".format(total_problem - count_failed_problem, username)
         if (count_failed_problem > 0):
             message += "\nFailed {0} problem(s). ".format(count_failed_problem)
@@ -85,22 +89,16 @@ class BotCommand(commands.Cog):
         await current_message.edit(content=message)
 
 
-    @commands.command(brief="Get failed problem(s) when give access", usage="[queryid]")
-    async def failed(self, ctx, query_id):
-        """Read at most 1500 charaters of log file with given id"""
+    @commands.command(brief="Get log of give access query", usage="[queryid]")
+    async def getlog(self, ctx, query_id):
+        """Get failed problems from log file of given id"""
         
-        if (int(query_id) >= self.id_query):
+        if (os.path.exists("botlogs/failed_" + str(query_id) + ".log") == False):
             await ctx.send("Query " + str(query_id) +" not found")
             return
 
-        with open("botlogs/failed_" + str(query_id) + ".log", "r") as logfile: message = "```\n" + logfile.read()
-        if (len(message) > 1500):
-            message = message[:1500]
-            message = "Because the failed list is too long, this is its first 1500 charaters:\n" + message
-        message += "\n```"
-        if (len(message) <= 2):
-            message = "Don't have any failed problem."
-        await ctx.send(message)
+        with open("botlogs/failed_" + str(query_id) + ".log", "r") as logfile: message = logfile.read()
+        paginator.paginate(self.bot, ctx, message, "Query " + str(query_id) + "'s failed list:")
     
 
 def setup(bot):
