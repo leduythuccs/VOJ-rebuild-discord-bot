@@ -1,1 +1,3 @@
 .env
+botlogs/
+__pycache__/
