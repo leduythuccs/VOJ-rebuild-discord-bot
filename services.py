@@ -11,7 +11,10 @@ class PolygonInteracter:
         self.api_secret = api_secret
 
         s = requests.session()
-        s.allow_redirects = False
+        # For debugging
+        # s.allow_redirects = False
+        # s.proxies = {'http': 'http://localhost:8888', 'https': 'http://localhost:8888'}
+        s.verify = False
 
         self.s = s
 
@@ -61,7 +64,7 @@ class PolygonInteracter:
         if not ('session' in data and data['session']):
             data['session'] = self.get_session_id(data['problemId'])
 
-        return self.s.request(method, BASE_URL + '/' + method_name, files=data, params=params)
+        return self.s.request(method, BASE_URL + '/' + method_name, files=data, params=params, allow_redirects=False)
 
     def request_official(self, method_name, data={}, params={}, method='POST'):
         params["apiKey"] = self.api_key
@@ -86,14 +89,14 @@ class PolygonInteracter:
     def get_problem_list(self):
         return self.request_official('problems.list').json()['result']
 
-    def give_access(self, problem_id, usernames, permission='WRITE', session=None):
+    def give_access(self, problem_id, usernames, write=False, session=None):
         # give username permission to problem 
 
         data = {
             'problemId': problem_id,
             'submitted': 'true',
             'users_added': ','.join(usernames),
-            'type': permission,
+            'type': 'Write' if write else 'Read',
             'session': session
         }
 
