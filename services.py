@@ -11,6 +11,9 @@ class PolygonInteracter:
         self.api_secret = api_secret
 
         s = requests.session()
+        # For debugging
+        # s.allow_redirects = False
+        # s.proxies = {'http': 'http://localhost:8888', 'https': 'http://localhost:8888'}
         s.verify = False
 
         self.s = s
