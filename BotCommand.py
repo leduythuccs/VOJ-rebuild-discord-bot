@@ -1,20 +1,25 @@
 from discord.ext import commands
 import os
 import services
+import json 
+from helper import paginator
 
 class BotCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.interator = services.PolygonInteracter(None, None)
-        self.un_complete = []
-    @commands.Cog.listener()
-    async def on_ready(self):
         username = os.getenv('POLYGON_USERNAME')
         password = os.getenv('POLYGON_PASSWORD')
-        print(username, password)
-        self.interator = services.PolygonInteracter(username, password)
+        api_key = os.getenv('POLYGON_API_KEY')
+        api_secret = os.getenv('POLYGON_API_SECRET')
+        self.interator = services.PolygonInteracter(username, password, api_key, api_secret)
+        self.problem_name_to_id = json.load(open("list_problems.json", "r"))
+        self.id_query = 0
+        open("botlogs/failed_0.log", "w")
     
 
+    def log(self, message):
+        open("botlogs/failed_" + str(self.id_query) + ".log", "a").write(message.strip() + '\n')
+    
     @commands.command(brief="Check if bot is still alive")
     async def ping(self, ctx):
         await ctx.send("I'm still alive")
@@ -39,41 +44,64 @@ class BotCommand(commands.Cog):
         await ctx.send(message)
 
 
-    @commands.command(brief="Give permission access", usage="[problems] [username]")
-    async def give(self, ctx, problem_set, username):
+    @commands.command(brief="Give permission access", usage="[problems] [username1] [username2] [username3] ...")
+    @commands.is_owner()
+    async def give(self, ctx, problem_set, *args):
         """Give permission access of problem(s),
         Currently, "problems" can be: a single name or a problem set
         """
         path = "problem_set/" + problem_set + ".txt"
+        username = args
         problems = []
         if (os.path.exists(path)):
             problems = list(map(lambda x: x.strip('\n'), open(path, "r").readlines()))
         else:
             problems = [problem_set]
-        self.un_complete = []
-        await ctx.send("Doing " + str(len(problems)) + " problems, it might takes a couple of minutes")
+
+        count_failed_problem = 0
+        total_problem = len(problems)
+
+        await ctx.send("Doing " + str(total_problem) + " problems, it might takes a couple of minutes")
+        current_message = await ctx.send("0/" + str(total_problem))
+        count_done = 0
+
         for p in problems:
-            if self.interator.give_access(p, username) == False:
-                self.un_complete.append(p)
+            p = p.upper()
+            if (p not in self.problem_name_to_id):
+                count_failed_problem += 1
+                self.log(p + ": don't have it on polygon")
+            else:
+                problem_id = self.problem_name_to_id[p]
+                if self.interator.give_access(problem_id, username, True) == False:
+                    count_failed_problem += 1
+                    self.log(p + ": failed when interact with polygon")
+            count_done += 1
+            if (count_done % 10 == 0):
+                await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
 
-        message = "Successfully gave {0} problem(s) to user `{1}` \n".format(len(problems) - len(self.un_complete), username)
-        message += "Failed {0} problem(s) \n".format(len(self.un_complete))
-        message += "Using `failed` command to see failed list."
-        await ctx.send(message)
+        message = "Successfully gave {0} problem(s) to user(s) `{1}`".format(total_problem - count_failed_problem, username)
+        if (count_failed_problem > 0):
+            message += "\nFailed {0} problem(s). ".format(count_failed_problem)
+            message += "Using `getlog` command with query id = {0} to see failed list.".format(self.id_query)
+            self.id_query += 1
+            open("botlogs/failed_" + str(self.id_query) + ".log", "w")
+        
+        await current_message.edit(content=message)
 
 
-    @commands.command(brief="Get failed problem(s) when give access")
-    async def failed(self, ctx):
-        message = "List failed = `"
-        for p in self.un_complete:
-            message += p + " "
-        if (len(message) > 500):
-            message = message[:500]
-            message = "Because the failed list is too long, this is its first 500 charaters:\n" + message
-        message += "`"
-        if (len(self.un_complete) == 0):
-            message = "Don't have any failed problem."
-        await ctx.send(message)
+    @commands.command(brief="Get log of give access query", usage="[queryid]")
+    async def getlog(self, ctx, query_id):
+        """Get failed problems from log file of given id"""
+        
+        if (os.path.exists("botlogs/failed_" + str(query_id) + ".log") == False):
+            await ctx.send("Query " + str(query_id) +" not found")
+            return
+
+        with open("botlogs/failed_" + str(query_id) + ".log", "r") as logfile: message = logfile.read()
+        if (len(message) == 0):
+            await ctx.send("Query " + str(query_id) +" not found")
+
+        paginator.paginate(self.bot, ctx, message, "Query " + str(query_id) + "'s failed list:")
     
 
 def setup(bot):
