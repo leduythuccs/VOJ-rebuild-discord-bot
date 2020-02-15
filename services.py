@@ -11,10 +11,11 @@ class PolygonInteracter:
         self.api_secret = api_secret
 
         s = requests.session()
+        s.allow_redirects = False
+
         # For debugging
-        # s.allow_redirects = False
         # s.proxies = {'http': 'http://localhost:8888', 'https': 'http://localhost:8888'}
-        s.verify = False
+        # s.verify = False
 
         self.s = s
 
@@ -66,7 +67,12 @@ class PolygonInteracter:
 
         return self.s.request(method, BASE_URL + '/' + method_name, files=data, params=params, allow_redirects=False)
 
-    def request_official(self, method_name, data={}, params={}, method='POST'):
+    def request_official(self, method_name, data=None, params=None, method='POST'):
+        if params is None:
+            params = {}
+        if data is None:
+            data = {}
+
         params["apiKey"] = self.api_key
         params["time"] = int(time.time())
 
@@ -102,25 +108,3 @@ class PolygonInteracter:
 
         r = self.request_unofficial('access', data=data, params={'action': 'add'}, method='POST')
         return 'location' in r.headers and 'access' in r.headers['location']
-
-
-# testing
-import os
-from dotenv import load_dotenv
-import traceback
-current_path = os.path.dirname(os.path.abspath(__file__))
-os.chdir(current_path)
-load_dotenv()
-username = os.getenv('POLYGON_USERNAME')
-password = os.getenv('POLYGON_PASSWORD')
-api_key = os.getenv('POLYGON_API_KEY')
-api_secret = os.getenv('POLYGON_API_SECRET')
-interactor = PolygonInteracter(username, password, api_key, api_secret)
-try:
-    print(len(str(interactor.get_problem_list())))
-    print('done 1')
-    print(len(str(interactor.get_problem_list())))
-    print('done 2')
-except KeyError as e:
-    print(e)
-    traceback.print_exc()
