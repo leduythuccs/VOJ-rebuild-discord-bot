@@ -11,10 +11,11 @@ class PolygonInteracter:
         self.api_secret = api_secret
 
         s = requests.session()
+        s.allow_redirects = False
+
         # For debugging
-        # s.allow_redirects = False
         # s.proxies = {'http': 'http://localhost:8888', 'https': 'http://localhost:8888'}
-        s.verify = False
+        # s.verify = False
 
         self.s = s
 
@@ -66,7 +67,12 @@ class PolygonInteracter:
 
         return self.s.request(method, BASE_URL + '/' + method_name, files=data, params=params, allow_redirects=False)
 
-    def request_official(self, method_name, data={}, params={}, method='POST'):
+    def request_official(self, method_name, data=None, params=None, method='POST'):
+        if params is None:
+            params = {}
+        if data is None:
+            data = {}
+
         params["apiKey"] = self.api_key
         params["time"] = int(time.time())
 
