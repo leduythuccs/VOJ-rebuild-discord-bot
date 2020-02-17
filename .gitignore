@@ -1,3 +1,4 @@
 .env
 botlogs/
 __pycache__/
+non_test_problem_set/
