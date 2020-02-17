@@ -1,3 +1,4 @@
+Ad hoc (không thuộc thể loại nào)
 PYRAMID2
 MIDAS
 CASTLE
