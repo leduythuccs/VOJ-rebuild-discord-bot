@@ -29,7 +29,8 @@ class BotCommand(commands.Cog):
 
         self.problem_name_to_id = json.load(open("list_problems.json", "r"))
         self.id_query = 0
-        self.start_time = time.time()
+        self.start_time = 0
+        self.dir_map = {}
     
     @commands.command(brief="diff")
     async def diff(self, ctx):
@@ -49,10 +50,22 @@ class BotCommand(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-
+        self.start_time = time.time()
         self.commit_state = helper.problem_json_to_dic(self.interator.get_problem_list())
         log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
         self.log_channel = self.bot.get_channel(log_channel_id)
+        #map
+        path = 'problem_set/'
+        for x in os.listdir(path):
+            if x.find('.') != -1:
+                x = x[:x.find('.')]
+                self.dir_map[x.lower()] = x
+            else:
+                self.dir_map[x.lower()] = x
+                for y in os.listdir(path + x + '/'):
+                    y = y[:y.find('.')]
+                    self.dir_map[y.lower()] = y
+
     
     def log(self, type_log, message):
         path = _LOG_PATH_ + "{0}_{1}.txt".format(self.id_query, type_log) 
@@ -107,12 +120,28 @@ class BotCommand(commands.Cog):
         await ctx.send("Dying")
         exit(0)
 
+    def format_name(self, x):
+        tmp = x.lower()
+        if tmp not in self.dir_map:
+            return "NULL"
+        return self.dir_map[tmp]
+
+    def format_path(self, x):
+        tmp = str(x.lower())
+        tmp.replace("//", "/")
+        tmp = '/'.join(map(lambda x: self.format_name(x), tmp.split('/')))
+        return tmp
+
     @commands.command(brief="Get all problem sets are available.", usage="[optional: problemset_folder]")
     async def problemset(self, ctx, *args):
         """Get all problem sets are available, if problemset_folder is provide, the bot will get all problem sets of that folder instead"""
         path = "problem_set/"
         if (len(args)):
-            path += args[0] + '/'
+            x = args[0]
+            while x[-1] == '/':
+                x = x[:-1]
+            path += self.format_name(x) + '/'
+        print(path)
         if os.path.exists(path) == False:
             await ctx.send("Path not found")
             return
@@ -133,18 +162,18 @@ class BotCommand(commands.Cog):
         Currently, "problems" can be: a single name or a problem set.
         [owner's command]
         """
-        problem_set = problem_set.lower()
+        problem_set = self.format_path(problem_set)
         path = "problem_set/"
         username = args
         problems = []
         folders = []
         print(";" + problem_set + ";")
-        if len(problem_set) >= 3 and problem_set[-3:] == "all" != -1:
-            if problem_set == "all":
-                folders = [path + "all.txt"]
+        if len(problem_set) >= 3 and problem_set[-3:] == "ALL" != -1:
+            if problem_set == "ALL":
+                folders = [path + self.format_name("ALL.txt")]
             else:
                 path += problem_set[:-3]
-                folders = [path + x for x in os.listdir(path)]
+                folders = [path + self.format_name(x) for x in os.listdir(path)]
         else:
             folders = [path + problem_set + ".txt"]
         print(folders)
@@ -173,7 +202,6 @@ class BotCommand(commands.Cog):
         if len(categories) >= 1:
             message = "Problem categories: " + categories + ". " + message
         await ctx.send(message)
-        
         current_message = await ctx.send("0/" + str(total_problem))
         count_done = 0
 
