@@ -71,7 +71,7 @@ class BotCommand(commands.Cog):
         path = _LOG_PATH_ + "{0}_{1}.txt".format(self.id_query, type_log) 
         if os.path.exists(path) == False:
             open(path, "w").close()
-        open(path, "a").write(message.strip() + '\n')
+        open(path, "a").write(message.strip() + ' ')
     
     def get_new_commit(self):
         current_commit_state = helper.problem_json_to_dic(self.interator.get_problem_list())

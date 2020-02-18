@@ -64,7 +64,7 @@ class PolygonInteracter:
 
         if not ('session' in data and data['session']):
             data['session'] = self.get_session_id(data['problemId'])
-
+        tmp = requests.session().request()
         return self.s.request(method, BASE_URL + '/' + method_name, files=data, params=params, allow_redirects=False)
 
     def request_official(self, method_name, data=None, params=None, method='POST'):
@@ -99,7 +99,7 @@ class PolygonInteracter:
         # give username permission to problem 
 
         data = {
-            'problemId': problem_id,
+            'problemId': str(problem_id),
             'submitted': 'true',
             'users_added': ','.join(usernames),
             'type': 'Write' if write else 'Read',
