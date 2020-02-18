@@ -92,12 +92,11 @@ class BotCommand(commands.Cog):
     @commands.command(brief="Get new commit each minute. [owner's command]")
     @commands.is_owner()
     async def loop(self, ctx):
-        channel = self.log_channel
-        if (channel is None):
+        if (self.log_channel is None):
             await ctx.send("Log channel not found.")
             return 
         cnt_loop = 0
-        await channel.send("Starting to get new commit every minute.")
+        await self.log_channel.send("Starting to get new commit every minute.")
         while True:
             print(cnt_loop)
             message = self.get_new_commit()
@@ -105,7 +104,7 @@ class BotCommand(commands.Cog):
             current_time = now.strftime("%Hh:%Mm:%Ss")
             if (len(message) > 0):
                 message = current_time + ": In past " + str(_WAIT_TIME_) + " minute(s), these problem(s) has new commit: `" + message + "`"
-                await channel.send(message)
+                await self.log_channel.send(message)
             await asyncio.sleep(_WAIT_TIME_ * 60)
 
     @commands.command(brief="Check if bot is still alive. Also prints bot uptime")
