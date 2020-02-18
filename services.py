@@ -64,7 +64,7 @@ class PolygonInteracter:
 
         if not ('session' in data and data['session']):
             data['session'] = self.get_session_id(data['problemId'])
-        tmp = requests.session().request()
+        
         return self.s.request(method, BASE_URL + '/' + method_name, files=data, params=params, allow_redirects=False)
 
     def request_official(self, method_name, data=None, params=None, method='POST'):
