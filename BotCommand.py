@@ -47,14 +47,9 @@ class BotCommand(commands.Cog):
         f.write(message)
         f.close()
         await ctx.send(file=discord.File("diff.txt"))
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        self.start_time = time.time()
-        self.commit_state = helper.problem_json_to_dic(self.interator.get_problem_list())
-        log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
-        self.log_channel = self.bot.get_channel(log_channel_id)
-        #map
+    
+    def mapping_file_name(self):
+        self.dir_map = {}
         path = 'problem_set/'
         for x in os.listdir(path):
             if x.find('.') != -1:
@@ -65,8 +60,14 @@ class BotCommand(commands.Cog):
                 for y in os.listdir(path + x + '/'):
                     y = y[:y.find('.')]
                     self.dir_map[y.lower()] = y
+    @commands.Cog.listener()
+    async def on_ready(self):
+        self.start_time = time.time()
+        self.commit_state = helper.problem_json_to_dic(self.interator.get_problem_list())
+        log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
+        self.log_channel = self.bot.get_channel(log_channel_id)
+        self.mapping_file_name()
 
-    
     def log(self, type_log, message):
         path = _LOG_PATH_ + "{0}_{1}.txt".format(self.id_query, type_log) 
         if os.path.exists(path) == False:
@@ -81,6 +82,10 @@ class BotCommand(commands.Cog):
                 message += name + " "
                 self.commit_state[name] = current_commit_state[name]
         return message
+
+    @commands.command(brief="Update problemset.")
+    async def update(self, ctx):
+        self.mapping_file_name()
 
     @commands.command(brief="Change log channel. [owner's command]")
     @commands.is_owner()
@@ -169,7 +174,7 @@ class BotCommand(commands.Cog):
         print(";" + problem_set + ";")
         if len(problem_set) >= 3 and problem_set[-3:] == "ALL" != -1:
             if problem_set == "ALL":
-                folders = [path + self.format_name("ALL.txt")]
+                folders = [path + self.format_name("ALL") + ".txt"]
             else:
                 path += problem_set[:-3]
                 folders = [path + self.format_name(x) for x in os.listdir(path)]
