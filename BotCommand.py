@@ -27,7 +27,7 @@ class BotCommand(commands.Cog):
         self.commit_state = None
         self.interator = services.PolygonInteracter(username, password, api_key, api_secret)
 
-        self.problem_name_to_id = json.load(open("list_problems.json", "r"))
+        self.problem_name_to_id = {}
         self.id_query = 0
         self.start_time = 0
         self.dir_map = {}
@@ -63,7 +63,9 @@ class BotCommand(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.start_time = time.time()
-        self.commit_state = helper.problem_json_to_dic(self.interator.get_problem_list())
+        problem_json = self.interator.get_problem_list()
+        self.commit_state = helper.get_commit_state(problem_json)
+        self.problem_name_to_id = helper.get_problem_name_id(problem_json)
         log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
         self.log_channel = self.bot.get_channel(log_channel_id)
         self.mapping_file_name()
@@ -75,7 +77,7 @@ class BotCommand(commands.Cog):
         open(path, "a").write(message.strip() + ' ')
     
     def get_new_commit(self):
-        current_commit_state = helper.problem_json_to_dic(self.interator.get_problem_list())
+        current_commit_state = helper.get_commit_state(self.interator.get_problem_list())
         message = ""
         for name in self.commit_state:
             if (current_commit_state[name] != self.commit_state[name]):

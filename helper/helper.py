@@ -1,6 +1,6 @@
 import json
 _OWNER_ = 'tuvietthao'
-def problem_json_to_dic(problems):
+def get_commit_state(problems):
     res = {}
     for problem in problems:
         if problem['owner'] != _OWNER_:
@@ -9,6 +9,17 @@ def problem_json_to_dic(problems):
         number_commit = int(problem['revision'])
         res[name] = number_commit
     return res
+
+def get_problem_name_id(problems):
+    res = {}
+    for problem in problems:
+        if problem['owner'] != _OWNER_:
+            continue
+        name = problem['name'].upper()
+        id = int(problem['id'])
+        res[name] = id
+    return res
+
 def time_format(seconds):
     seconds = int(seconds)
     days, seconds = divmod(seconds, 86400)
