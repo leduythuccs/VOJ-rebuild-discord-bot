@@ -31,23 +31,7 @@ class BotCommand(commands.Cog):
         self.id_query = 0
         self.start_time = 0
         self.dir_map = {}
-    
-    @commands.command(brief="diff")
-    async def diff(self, ctx):
-        link = 'https://raw.githubusercontent.com/t-rekttt/VOJ/master/haveTests.txt'
-        path_old = 'old_all.txt'
-        cur = requests.get(link).text
-        f1 = list(map(lambda x: x.strip('\n'), cur.split('\n')))
-        f2 = list(map(lambda x: x.strip('\n'), open(path_old, "r", encoding="utf-8").readlines()))
-        message = ""
-        for x in f1:
-            if x not in f2:
-                message += x + "\n"
-        f = open("diff.txt", "w")
-        f.write(message)
-        f.close()
-        await ctx.send(file=discord.File("diff.txt"))
-    
+        self.in_loop = False
     def mapping_file_name(self):
         self.dir_map = {}
         path = 'problem_set/'
@@ -60,6 +44,7 @@ class BotCommand(commands.Cog):
                 for y in os.listdir(path + x + '/'):
                     y = y[:y.find('.')]
                     self.dir_map[y.lower()] = y
+
     @commands.Cog.listener()
     async def on_ready(self):
         self.start_time = time.time()
@@ -102,10 +87,12 @@ class BotCommand(commands.Cog):
         if (self.log_channel is None):
             await ctx.send("Log channel not found.")
             return 
-        cnt_loop = 0
+        if (self.in_loop):
+            await ctx.send("Already loop")
+            return
         await self.log_channel.send("Starting to get new commit every minute.")
+        self.in_loop = True
         while True:
-            print(cnt_loop)
             message = self.get_new_commit()
             now = datetime.now()
             current_time = now.strftime("%Hh:%Mm:%Ss")
@@ -122,7 +109,7 @@ class BotCommand(commands.Cog):
     @commands.command(brief="Kill bot. [owner's command]")
     @commands.is_owner()
     async def kill(self, ctx):
-        """Kill bot, only bot's owner can call this command"""
+        """Kill bot"""
         await ctx.send("Dying")
         exit(0)
 
@@ -137,7 +124,40 @@ class BotCommand(commands.Cog):
         tmp.replace("//", "/")
         tmp = '/'.join(map(lambda x: self.format_name(x), tmp.split('/')))
         return tmp
-
+    def get_give_list(self, problem_set):
+        problem_set = self.format_path(problem_set)
+        path = "problem_set/"
+        problems = []
+        folders = []
+        print(";" + problem_set + ";")
+        if len(problem_set) >= 3 and problem_set[-3:] == "ALL" != -1:
+            if problem_set == "ALL":
+                folders = [path + self.format_name("ALL") + ".txt"]
+            else:
+                path += problem_set[:-3]
+                folders = [path + self.format_name(x) for x in os.listdir(path)]
+        else:
+            folders = [path + problem_set + ".txt"]
+        print(folders)
+        files = []
+        for folder in folders:
+            if folder.find('.') != -1:
+                files.append(folder)
+            else:
+                files += os.listdir(folder)
+        print(files)
+        categories = ""
+        for f in files:
+            if (os.path.exists(f)):
+                data = list(map(lambda x: x.strip('\n'), open(f, "r", encoding='utf-8').readlines()))
+                categories += data[0] + ", "
+                problems += data[1:]
+            else:
+                problems += [problem_set]
+        if len(categories) >= 2:
+            categories = categories[0:-2]
+            
+        problems = list(set(problems)) # erase duplicate problems
     @commands.command(brief="Get all problem sets are available.", usage="[optional: problemset_folder]")
     async def problemset(self, ctx, *args):
         """Get all problem sets are available, if problemset_folder is provide, the bot will get all problem sets of that folder instead"""
@@ -168,40 +188,8 @@ class BotCommand(commands.Cog):
         Currently, "problems" can be: a single name or a problem set.
         [owner's command]
         """
-        problem_set = self.format_path(problem_set)
-        path = "problem_set/"
+        problems = self.get_give_list(problem_set)
         username = args
-        problems = []
-        folders = []
-        print(";" + problem_set + ";")
-        if len(problem_set) >= 3 and problem_set[-3:] == "ALL" != -1:
-            if problem_set == "ALL":
-                folders = [path + self.format_name("ALL") + ".txt"]
-            else:
-                path += problem_set[:-3]
-                folders = [path + self.format_name(x) for x in os.listdir(path)]
-        else:
-            folders = [path + problem_set + ".txt"]
-        print(folders)
-        files = []
-        for folder in folders:
-            if folder.find('.') != -1:
-                files.append(folder)
-            else:
-                files += os.listdir(folder)
-        print(files)
-        categories = ""
-        for f in files:
-            if (os.path.exists(f)):
-                data = list(map(lambda x: x.strip('\n'), open(f, "r", encoding='utf-8').readlines()))
-                categories += data[0] + ", "
-                problems += data[1:]
-            else:
-                problems += [problem_set]
-        if len(categories) >= 2:
-            categories = categories[0:-2]
-        #erase duplicate problems
-        problems = list(set(problems))
         count_failed_problem = 0
         total_problem = len(problems)
         message = "Doing " + str(total_problem) + " problems, it might takes a couple of minutes"
