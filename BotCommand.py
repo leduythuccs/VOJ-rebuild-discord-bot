@@ -7,6 +7,8 @@ import json
 from datetime import datetime
 from helper import paginator
 from helper import helper
+from helper import database
+from helper import table
 import requests
 import time
 
@@ -15,6 +17,19 @@ _WAIT_TIME_ = 1 #minute
 _LOG_PATH_ = 'botlogs/'
 _NOT_FOUND_ = 0
 _INTERACTION_FAILED_ = 1
+class Database:
+    def __init__(self):
+        self.file_path = 'database/user_database.json'
+        with open(self.file_path, "r") as json_file: self.cur = json.load(json_file)
+
+    def load(self):
+        with open(self.file_path, "r") as json_file: self.cur = json.load(json_file)
+
+    def set(self, id_discord, username_polygon):
+        self.load()
+        if id_discord in self.cur:
+            self.cur.pop(id_discord)
+    
 class BotCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -32,6 +47,9 @@ class BotCommand(commands.Cog):
         self.start_time = 0
         self.dir_map = {}
         self.in_loop = False
+        
+        self.db = database.DataUser()
+
     def mapping_file_name(self):
         self.dir_map = {}
         path = 'problem_set/'
@@ -97,7 +115,7 @@ class BotCommand(commands.Cog):
             now = datetime.now()
             current_time = now.strftime("%Hh:%Mm:%Ss")
             if (len(message) > 0):
-                tilte = current_time + ": In past " + str(_WAIT_TIME_)  \
+                title = current_time + ": In past " + str(_WAIT_TIME_)  \
                         + "minute(s), these problem(s) has new commit: "
                 if len(message) < 1000:
                     message = title + "`" + message + "`"
@@ -250,6 +268,33 @@ class BotCommand(commands.Cog):
             paginator.paginate(self.bot, self.log_channel, message, title)
         if not found:
             await ctx.send("Query not found")
+
+    @commands.command(brief="Set polygon username of a user")
+    async def set(self, ctx, member: discord.Member, polygon_username: str):
+        self.db.set(member.id, polygon_username)
+    
+    @commands.command(brief="Get polygon username of a user")
+    async def get(self, ctx, member: discord.Member):
+        self.db.get(member.id)
+
+    @commands.command(brief="Get staff list")
+    async def list(self, ctx):
+        cur = self.db.list()
+        style = table.Style('{:>}  {:<}  {:<}')
+        t = table.Table(style)
+        t += table.Header('#', 'Name', 'Polygon')
+        t += table.Line()
+        index = 0
+        for user_id in cur:
+            member = ctx.guild.get_member(int(user_id))
+            if member is None:
+                continue
+            index += 1
+            name = member.display_name
+            t += table.Data(index, name, cur[user_id])
+            
+        msg = '```\n' + str(t) + '\n```'
+        await ctx.send(msg)
 
 def setup(bot):
     bot.add_cog(BotCommand(bot))
