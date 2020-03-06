@@ -97,8 +97,13 @@ class BotCommand(commands.Cog):
             now = datetime.now()
             current_time = now.strftime("%Hh:%Mm:%Ss")
             if (len(message) > 0):
-                message = current_time + ": In past " + str(_WAIT_TIME_) + " minute(s), these problem(s) has new commit: `" + message + "`"
-                await self.log_channel.send(message)
+                tilte = current_time + ": In past " + str(_WAIT_TIME_)  \
+                        + "minute(s), these problem(s) has new commit: "
+                if len(message) < 1000:
+                    message = title + "`" + message + "`"
+                    await self.log_channel.send(message)
+                else:
+                    paginator.paginate(self.bot, self.log_channel, message, title)
             await asyncio.sleep(_WAIT_TIME_ * 60)
 
     @commands.command(brief="Check if bot is still alive. Also prints bot uptime")
@@ -124,8 +129,10 @@ class BotCommand(commands.Cog):
         tmp.replace("//", "/")
         tmp = '/'.join(map(lambda x: self.format_name(x), tmp.split('/')))
         return tmp
+
     def get_give_list(self, problem_set):
         problem_set = self.format_path(problem_set)
+
         path = "problem_set/"
         problems = []
         folders = []
@@ -156,8 +163,11 @@ class BotCommand(commands.Cog):
                 problems += [problem_set]
         if len(categories) >= 2:
             categories = categories[0:-2]
-            
+    
         problems = list(set(problems)) # erase duplicate problems
+        print(problems)
+        return problems, categories
+
     @commands.command(brief="Get all problem sets are available.", usage="[optional: problemset_folder]")
     async def problemset(self, ctx, *args):
         """Get all problem sets are available, if problemset_folder is provide, the bot will get all problem sets of that folder instead"""
@@ -188,7 +198,8 @@ class BotCommand(commands.Cog):
         Currently, "problems" can be: a single name or a problem set.
         [owner's command]
         """
-        problems = self.get_give_list(problem_set)
+        problems, categories = self.get_give_list(problem_set)
+
         username = args
         count_failed_problem = 0
         total_problem = len(problems)
