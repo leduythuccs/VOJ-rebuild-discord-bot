@@ -306,9 +306,5 @@ class BotCommand(commands.Cog):
         msg = '```\n' + str(t) + '\n```'
         await ctx.send(msg)
 
-    @commands.command(brief="test...")
-    async def test_arg(self, ctx, *args):
-        print(args)
-
 def setup(bot):
     bot.add_cog(BotCommand(bot))
