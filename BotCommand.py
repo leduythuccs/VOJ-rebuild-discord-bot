@@ -208,6 +208,17 @@ class BotCommand(commands.Cog):
                 message += p + "/ "
         message += "`"
         await ctx.send(message)
+    def get_usernames(self, args):
+        usernames = []
+        for arg in args:
+            name = ""
+            if len(arg) > 3 and arg[0] == '<':
+                arg = arg[3:-1]
+                arg = self.db.get(arg)
+                if arg == "":
+                    continue
+            usernames.append(arg)
+        return usernames
 
     @commands.command(brief="Give permission access. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
     @commands.is_owner()
@@ -218,7 +229,9 @@ class BotCommand(commands.Cog):
         """
         problems, categories = self.get_give_list(problem_set)
 
-        username = args
+        username = self.get_usernames(args)
+        print(username)
+
         count_failed_problem = 0
         total_problem = len(problems)
         message = "Doing " + str(total_problem) + " problems, it might takes a couple of minutes"
@@ -272,10 +285,6 @@ class BotCommand(commands.Cog):
     @commands.command(brief="Set polygon username of a user")
     async def set(self, ctx, member: discord.Member, polygon_username: str):
         self.db.set(member.id, polygon_username)
-    
-    @commands.command(brief="Get polygon username of a user")
-    async def get(self, ctx, member: discord.Member):
-        self.db.get(member.id)
 
     @commands.command(brief="Get staff list")
     async def list(self, ctx):
@@ -295,6 +304,10 @@ class BotCommand(commands.Cog):
             
         msg = '```\n' + str(t) + '\n```'
         await ctx.send(msg)
+
+    @commands.command(brief="test...")
+    async def test_arg(self, ctx, *args):
+        print(args)
 
 def setup(bot):
     bot.add_cog(BotCommand(bot))
