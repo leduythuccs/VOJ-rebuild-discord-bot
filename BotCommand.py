@@ -285,7 +285,13 @@ class BotCommand(commands.Cog):
     @commands.command(brief="Set polygon username of a user")
     async def set(self, ctx, member: discord.Member, polygon_username: str):
         self.db.set(member.id, polygon_username)
-        await ctx.send("Polygon username for {member.display_name} successfully set to {polygon_username}")
+        roles = ctx.channel.guild.roles
+        s = ""
+        for role in roles:
+            if role.name == 'VOJ-staff':
+                await member.add_roles(role)
+                s = " & role `VOJ-staff`"
+        await ctx.send("Polygon username for " + member.display_name + s +  " successfully set to "  + polygon_username)
 
     @commands.command(brief="Get staff list")
     async def list(self, ctx):
@@ -304,6 +310,7 @@ class BotCommand(commands.Cog):
             t += table.Data(index, name, cur[user_id])
             
         msg = '```\n' + str(t) + '\n```'
+
         await ctx.send(msg)
 
 def setup(bot):
