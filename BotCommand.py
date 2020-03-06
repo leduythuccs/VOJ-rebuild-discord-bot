@@ -285,6 +285,7 @@ class BotCommand(commands.Cog):
     @commands.command(brief="Set polygon username of a user")
     async def set(self, ctx, member: discord.Member, polygon_username: str):
         self.db.set(member.id, polygon_username)
+        await ctx.send("Polygon username for {member.display_name} successfully set to {polygon_username}")
 
     @commands.command(brief="Get staff list")
     async def list(self, ctx):
