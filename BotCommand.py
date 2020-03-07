@@ -148,8 +148,9 @@ class BotCommand(commands.Cog):
         tmp = '/'.join(map(lambda x: self.format_name(x), tmp.split('/')))
         return tmp
 
-    def get_give_list(self, problem_set):
-        problem_set = self.format_path(problem_set)
+    def get_give_list(self, sets):
+        
+        problem_set = self.format_path(sets)
 
         path = "problem_set/"
         problems = []
@@ -178,7 +179,7 @@ class BotCommand(commands.Cog):
                 categories += data[0] + ", "
                 problems += data[1:]
             else:
-                problems += [problem_set]
+                problems += [sets]
         if len(categories) >= 2:
             categories = categories[0:-2]
     
@@ -236,7 +237,7 @@ class BotCommand(commands.Cog):
             return
 
         self.id_query += 1
-        
+
         count_failed_problem = 0
         total_problem = len(problems)
         message = "Doing " + str(total_problem) + " problems, it might takes a couple of minutes"
