@@ -291,7 +291,7 @@ class BotCommand(commands.Cog):
             if role.name == 'VOJ-staff':
                 await member.add_roles(role)
                 s = " & role `VOJ-staff`"
-        await ctx.send("Polygon username for " + member.display_name + s +  " successfully set to "  + polygon_username)
+        await ctx.send("Polygon username " + polygon_username + s + " successfully set to "  + member.display_name)
 
     @commands.command(brief="Get staff list")
     async def list(self, ctx):
