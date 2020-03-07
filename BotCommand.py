@@ -231,7 +231,12 @@ class BotCommand(commands.Cog):
 
         username = self.get_usernames(args)
         print(username)
+        if len(username) == 0:
+            await ctx.send("username not found")
+            return
 
+        self.id_query += 1
+        
         count_failed_problem = 0
         total_problem = len(problems)
         message = "Doing " + str(total_problem) + " problems, it might takes a couple of minutes"
