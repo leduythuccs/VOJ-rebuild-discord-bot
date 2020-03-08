@@ -247,7 +247,7 @@ class BotCommand(commands.Cog):
         await ctx.send(message)
         current_message = await ctx.send("0/" + str(total_problem))
         count_done = 0
-
+        succeed_problems = []
         for p in problems:
             p = p.upper()
             if (p not in self.problem_name_to_id):
@@ -258,11 +258,14 @@ class BotCommand(commands.Cog):
                 if self.interator.give_access(problem_id, username, True) == False:
                     count_failed_problem += 1
                     self.log(type_log = _INTERACTION_FAILED_, message = p)
+                else:
+                    succeed_problems.append(p)
             count_done += 1
-            if (count_done % 10 == 0):
+            if (count_done % 5 == 0):
                 await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
 
-        message = "Successfully gave {0} problem(s) to user(s) `{1}`".format(total_problem - count_failed_problem, username)
+        message = "Successfully gave {0} problem(s) ({2}) to `{1}`".format(len(succeed_problems), username, ' '.join(succeed_problems))
+        
         if (count_failed_problem > 0):
             message += "\nFailed {0} problem(s). ".format(count_failed_problem)
             message += "Using `getlog` command with query id = {0} to see failed list.".format(self.id_query)
