@@ -62,6 +62,7 @@ class BotCommand(commands.Cog):
                 for y in os.listdir(path + x + '/'):
                     y = y[:y.find('.')]
                     self.dir_map[y.lower()] = y
+        print(self.dir_map)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -156,12 +157,12 @@ class BotCommand(commands.Cog):
         problems = []
         folders = []
         print(";" + problem_set + ";")
-        if len(problem_set) >= 3 and problem_set[-3:] == "ALL" != -1:
+        if len(sets) >= 3 and sets[-3:].upper() == "ALL" != -1:
             if problem_set == "ALL":
                 folders = [path + self.format_name("ALL") + ".txt"]
             else:
-                path += problem_set[:-3]
-                folders = [path + self.format_name(x) for x in os.listdir(path)]
+                path += problem_set[:problem_set.rfind('/') + 1]
+                folders = [path + self.format_name(x[:x.find('.')]) + '.txt' for x in os.listdir(path)]
         else:
             folders = [path + problem_set + ".txt"]
         print(folders)
@@ -222,7 +223,7 @@ class BotCommand(commands.Cog):
         return usernames
 
     @commands.command(brief="Give permission access. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
-    @commands.is_owner()
+    @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
     async def give(self, ctx, problem_set, *args):
         """Give permission access of problem(s),
         Currently, "problems" can be: a single name or a problem set.
