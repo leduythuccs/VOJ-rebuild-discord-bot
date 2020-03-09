@@ -1,5 +1,5 @@
 import json
-__PREFIX__ = 'voj-'
+__PREFIX__ = 'VOJ-'
 def get_commit_state(problems):
     res = {}
     for problem in problems:
