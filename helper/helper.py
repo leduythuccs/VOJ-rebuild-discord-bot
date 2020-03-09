@@ -3,9 +3,9 @@ __PREFIX__ = 'voj-'
 def get_commit_state(problems):
     res = {}
     for problem in problems:
-        if __PREFIX__ and problem.find(__PREFIX__) == -1:
-            continue
         name = problem['name'].upper()
+        if __PREFIX__ and name.find(__PREFIX__) == -1:
+            continue
         number_commit = int(problem['revision'])
         res[name] = number_commit
     return res
