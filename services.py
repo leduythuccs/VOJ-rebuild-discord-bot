@@ -108,3 +108,5 @@ class PolygonInteracter:
 
         r = self.request_unofficial('access', data=data, params={'action': 'add'}, method='POST')
         return 'location' in r.headers and 'access' in r.headers['location']
+
+    
