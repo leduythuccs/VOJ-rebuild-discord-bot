@@ -12,7 +12,6 @@ from helper import table
 import requests
 import time
 
-_OWNER_ = 'tuvietthao'
 _WAIT_TIME_ = 1 #minute
 _LOG_PATH_ = 'botlogs/'
 _NOT_FOUND_ = 0

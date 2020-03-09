@@ -1,9 +1,9 @@
 import json
-_OWNER_ = 'tuvietthao'
+__PREFIX__ = 'voj-'
 def get_commit_state(problems):
     res = {}
     for problem in problems:
-        if problem['owner'] != _OWNER_:
+        if __PREFIX__ and problem.find(__PREFIX__) == -1:
             continue
         name = problem['name'].upper()
         number_commit = int(problem['revision'])
@@ -13,10 +13,15 @@ def get_commit_state(problems):
 def get_problem_name_id(problems):
     res = {}
     for problem in problems:
-        if problem['owner'] != _OWNER_:
+        if __PREFIX__ and problem.find(__PREFIX__) == -1:
             continue
+
         name = problem['name'].upper()
         id = int(problem['id'])
+        if name in res:
+            if problem['owner'] == 'tuvietthao':
+                continue
+            
         res[name] = id
     return res
 
