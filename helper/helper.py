@@ -13,10 +13,9 @@ def get_commit_state(problems):
 def get_problem_name_id(problems):
     res = {}
     for problem in problems:
-        if __PREFIX__ and problem.find(__PREFIX__) == -1:
-            continue
-
         name = problem['name'].upper()
+        if __PREFIX__ and name.find(__PREFIX__) == -1:
+            continue
         id = int(problem['id'])
         if name in res:
             if problem['owner'] == 'tuvietthao':
