@@ -256,9 +256,9 @@ class BotCommand(commands.Cog):
                 problem_id = self.problem_name_to_id[p]
                 if self.interator.give_access(problem_id, username, True) == False:
                     count_failed_problem += 1
-                    self.log(type_log = _INTERACTION_FAILED_, message = p)
+                    self.log(type_log = _INTERACTION_FAILED_, message = p[4:])
                 else:
-                    succeed_problems.append(p)
+                    succeed_problems.append(p[4:])
             count_done += 1
             if (count_done % 5 == 0):
                 await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
