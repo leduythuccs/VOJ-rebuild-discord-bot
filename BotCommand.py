@@ -92,6 +92,13 @@ class BotCommand(commands.Cog):
     async def update(self, ctx):
         self.mapping_file_name()
 
+    @commands.command(brief="Re-login to polygon") 
+    async def re_login(self, ctx):
+        if self.interator.login():
+            await ctx.send('VOJ-BOT logged to polygon')
+        else:
+            await ctx.send('Failed')
+
     @commands.command(brief="Change log channel. [owner's command]")
     @commands.is_owner()
     async def change_log(self, ctx):
