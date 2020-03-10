@@ -1,4 +1,5 @@
-PPXOASO set 4
+Các bài không có tag set 4
+KBSTR
 NKITS
 DCTT
 MPM
@@ -24,4 +25,3 @@ FRACTION
 CTNMRECT
 C11PHONE
 THBAS
-THT02
