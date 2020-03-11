@@ -66,11 +66,11 @@ const char validChar[]="$()+-*";
 #define SUB   -4
 #define MUL   -5
 #define EMPTY   -6
-deque<int> token;
+deque<int> token;
 
-Hash loadExprLv1(int exprID);
-Hash loadExprLv2(int exprID);
-Hash loadExprLv3(int exprID);
+Hash loadExprLv1(int exprID);
+Hash loadExprLv2(int exprID);
+Hash loadExprLv3(int exprID);
 
 int nextToken(void) {
     if (token.empty()) return (-6);
@@ -89,12 +89,12 @@ Hash loadExprLv1(int exprID) {
     if (nextToken()==OPEN) {
         popToken();
         Hash res=loadExprLv3(exprID);
-        //if (nextToken()!=CLOSE) stream.quitf(_wa,"Expression #%d is invalid",exprID);
+        //if (nextToken()!=CLOSE) stream.quitf(_wa,"Expression #%d is invalid",exprID);
         spoj_assert(nextToken() == CLOSE);
         popToken();
         return (res);
     }
-    //stream.quitf(_wa,"Expression #%d is invalid",exprID);
+    //stream.quitf(_wa,"Expression #%d is invalid",exprID);
     spoj_assert(false);
 }
 Hash loadExprLv2(int exprID) {
@@ -116,13 +116,13 @@ Hash loadExprLv3(int exprID) {
     return (res);
 }
 Hash checkExpr(int exprID,string expr) {
-    //if (expr.empty()) stream.quitf(_wa,"Expression #%d is empty",exprID);
+    //if (expr.empty()) stream.quitf(_wa,"Expression #%d is empty",exprID);
     spoj_assert(!expr.empty());
     FORE(it,expr) {
         bool ok=false;
         if ('0'<=*it && *it<='9') ok=true;
         FOR(i,1,5) if (*it==validChar[i]) ok=true;
-        //if (!ok) stream.quitf(_wa,"Expression #%d is invalid",exprID);
+        //if (!ok) stream.quitf(_wa,"Expression #%d is invalid",exprID);
         spoj_assert(ok);
     }
     token.clear();
@@ -141,19 +141,19 @@ Hash checkExpr(int exprID,string expr) {
         }
     }
     Hash res=loadExprLv3(exprID);
-    //if (nextToken()!=EMPTY) stream.quitf(_wa,"Expression #%d is invalid",exprID);
+    //if (nextToken()!=EMPTY) stream.quitf(_wa,"Expression #%d is invalid",exprID);
     spoj_assert(nextToken() == EMPTY);
     return (res);
 }
 const string noAns="NO SOLUTION";
 string expr[MAX];
 int n;
-void init(void) {
-    fscanf(spoj_p_in, "%d", &n);
-    char tmp[100];
-    FOR(i, 1, n) {
-        fscanf(spoj_p_in, "%s\n", tmp);
-        expr[i] = string(tmp);
+void init(void) {
+    fscanf(spoj_p_in, "%d", &n);
+    char tmp[100];
+    FOR(i, 1, n) {
+        fscanf(spoj_p_in, "%s\n", tmp);
+        expr[i] = string(tmp);
     }
 }
 bool checkMatchExpr(string expr,string form) {
@@ -162,35 +162,35 @@ bool checkMatchExpr(string expr,string form) {
     return (tmp==form);
 }
 bool checkAnswer() {
-    map<Hash,int> exprID;
+    map<Hash,int> exprID;
     char tmp_raw[100000];
     FOR(i,1,n) {
-        //string tmp=readLine();
-        fscanf(spoj_t_out, "%s\n", tmp_raw);
+        //string tmp=readLine();
+        fscanf(spoj_t_out, "%s\n", tmp_raw);
         string tmp = string (tmp_raw);
         if (i==1 && tmp==noAns) return (false);
         Hash val=checkExpr(i,tmp);
-        //if (!checkMatchExpr(tmp,expr[i])) stream.quitf(_wa,"Expression #%d does not correspond to the given one",i);
+        //if (!checkMatchExpr(tmp,expr[i])) stream.quitf(_wa,"Expression #%d does not correspond to the given one",i);
         spoj_assert(checkMatchExpr(tmp, expr[i]));
-        //if (exprID.find(val)!=exprID.end()) stream.quitf(_wa,"Expression #%d and #%d has same value",i,exprID[val]);
+        //if (exprID.find(val)!=exprID.end()) stream.quitf(_wa,"Expression #%d and #%d has same value",i,exprID[val]);
         spoj_assert(exprID.find(val) == exprID.end());
         exprID[val]=i;
     }
     return (true);
 }
-void process(void) {
-    char t[100];
-    fscanf(spoj_p_out, "%s\n", t);
-    if (t[0] == 'N') {
-        char tt[1111];
-        fscanf(spoj_t_out, "%s\n", tt);
-        spoj_assert(tt[0] == 'N');
-        return;
+void process(void) {
+    char t[100];
+    fscanf(spoj_p_out, "%s\n", t);
+    if (t[0] == 'N') {
+        char tt[1111];
+        fscanf(spoj_t_out, "%s\n", tt);
+        spoj_assert(tt[0] == 'N');
+        return;
     }
     bool res=checkAnswer();
     spoj_assert(res);
 }
-int main(int c,char **v) {
+int main(int c,char **v) {
     spoj_init();
     init();
     process();
