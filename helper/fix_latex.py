@@ -1,7 +1,6 @@
 import re
 import unicodedata
-def fix():
-    with open("statement.txt", "r", encoding="utf-8") as IN: data = IN.read()
+def fix(data):
     data = unicodedata.normalize("NFKD", data)
     data = data.replace('\r','')
     # add space after punctuation
@@ -59,7 +58,8 @@ def fix():
     data = re.sub(r'\(\s+','(',data)
     # remove space before ) (again)
     data = re.sub(r'\s+\)',')',data)
-    
-    print('done')
+
+    return data
+if __name__ == '__main__':
+    data = fix(open("statement.txt", "r", encoding="utf-8").read())
     with open("statement.txt", "w", encoding="utf-8") as OUT: OUT.write(data)
-fix()
