@@ -11,7 +11,7 @@ from helper import database
 from helper import table
 import requests
 import time
-
+_FIXLATEX_WEB_ = 'https://leduythuccs.github.io/fix.html'
 _WAIT_TIME_ = 1 #minute
 _LOG_PATH_ = 'botlogs/'
 _NOT_FOUND_ = 0
@@ -217,6 +217,7 @@ class BotCommand(commands.Cog):
         message += "`"
         await ctx.send(message)
     def get_usernames(self, args):
+        print(args)
         usernames = []
         for arg in args:
             name = ""
@@ -274,8 +275,8 @@ class BotCommand(commands.Cog):
         
         if (count_failed_problem > 0):
             message += "\nFailed {0} problem(s). ".format(count_failed_problem)
-            message += "Using `getlog` command with query id = {0} to see failed list.".format(self.id_query)
-        
+            message += "Query id = {0}.".format(self.id_query)
+        message += "\n. Please checkout " + _FIXLATEX_WEB_ + " to quick fix latex."
         await current_message.edit(content=message)
 
     @commands.command(brief="Get log of give access query.", usage="[queryid]")

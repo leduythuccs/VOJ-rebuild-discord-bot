@@ -1,6 +1,6 @@
 import re
 import unicodedata
-def fix(data):
+def fix_latex(data):
     data = unicodedata.normalize("NFKD", data)
     data = data.replace('\r','')
     # add space after punctuation
@@ -61,5 +61,5 @@ def fix(data):
 
     return data
 if __name__ == '__main__':
-    data = fix(open("statement.txt", "r", encoding="utf-8").read())
+    data = fix_latex(open("statement.txt", "r", encoding="utf-8").read())
     with open("statement.txt", "w", encoding="utf-8") as OUT: OUT.write(data)
