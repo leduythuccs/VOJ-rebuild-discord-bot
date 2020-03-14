@@ -276,7 +276,7 @@ class BotCommand(commands.Cog):
         if (count_failed_problem > 0):
             message += "\nFailed {0} problem(s). ".format(count_failed_problem)
             message += "Query id = {0}.".format(self.id_query)
-        message += "\n. Please checkout " + _FIXLATEX_WEB_ + " to quick fix latex."
+        message += "\nPlease checkout " + _FIXLATEX_WEB_ + " to quick fix latex."
         await current_message.edit(content=message)
 
     @commands.command(brief="Get log of give access query.", usage="[queryid]")
