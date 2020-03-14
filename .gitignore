@@ -2,3 +2,4 @@
 botlogs/
 __pycache__/
 non_test_problem_set/
+database/user_database.json
