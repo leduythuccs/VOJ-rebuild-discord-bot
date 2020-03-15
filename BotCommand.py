@@ -314,7 +314,7 @@ class BotCommand(commands.Cog):
         if len(usernames) == 0:
             await ctx.send("username not found")
             return
-        self.give_access(ctx, problem_set, usernames)
+        await self.give_access(ctx, problem_set, usernames)
 
     @commands.command(brief="Force give permission access. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
     @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
@@ -328,7 +328,7 @@ class BotCommand(commands.Cog):
         if len(usernames) == 0:
             await ctx.send("username not found")
             return
-        self.give_access(ctx, problem_set, usernames, force = True)
+        await self.give_access(ctx, problem_set, usernames, force = True)
     
     @commands.command(brief="Give permission access to reviewers. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
     @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
@@ -342,7 +342,7 @@ class BotCommand(commands.Cog):
         if len(usernames) == 0:
             await ctx.send("username not found")
             return
-        self.give_access(ctx, problem_set, usernames, is_review=True)
+        await self.give_access(ctx, problem_set, usernames, is_review=True)
 
     @commands.command(brief="Force give permission access to reviewers. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
     @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
@@ -356,7 +356,7 @@ class BotCommand(commands.Cog):
         if len(usernames) == 0:
             await ctx.send("username not found")
             return
-        self.give_access(ctx, problem_set, usernames, is_review=True, force = True)
+        await self.give_access(ctx, problem_set, usernames, is_review=True, force = True)
     
     @commands.command(brief="Get log of give access query.", usage="[queryid]")
     async def get_log(self, ctx, query_id):
