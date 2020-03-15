@@ -242,7 +242,7 @@ class BotCommand(commands.Cog):
                     continue
             usernames.append(arg)
         return usernames
-    def give_access(self, ctx, problem_set, usernames, force = False, is_review=False):
+    async def give_access(self, ctx, problem_set, usernames, force = False, is_review=False):
         non_white_list_username = usernames
         if not is_review:
             non_white_list_username = list(filter(lambda x: x in _WHITE_LIST_USER_NAME_, usernames))
