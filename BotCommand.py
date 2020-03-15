@@ -19,10 +19,10 @@ _INTERACTION_FAILED_ = 1
 _ALREADY_GAVE_ = 2
 _ALREADY_REVIEWED_ = 3
 _TITLE_MAP_ = {
-    _NOT_FOUND_ : "List not found problem(s):",
-    _INTERACTION_FAILED_ : "List problem(s) failed when interact with polygon:",
-    _ALREADY_GAVE_ : "List problem(s) already gave:",
-    _ALREADY_REVIEWED_ : "List problem(s) already review: "
+    _NOT_FOUND_ : "List not found problem:",
+    _INTERACTION_FAILED_ : "List problem failed when interact with polygon:",
+    _ALREADY_GAVE_ : "List problem already gave:",
+    _ALREADY_REVIEWED_ : "List problem already review: "
 }
 _WHITE_LIST_USER_NAME_ = ['leduykhongngu', 'tuvietthao', 'MLGuy', 'codeforces']
 class Database:
@@ -277,6 +277,7 @@ class BotCommand(commands.Cog):
                 if user is not None:
                     count_failed_problem += 1
                     self.log(type_log = _ALREADY_GAVE_, message = p[4:] + ' ' + user + '\n')
+                    continue
                 problem_id = self.problem_name_to_id[p]
                 if self.interator.give_access(problem_id, username, True) == False:
                     count_failed_problem += 1
@@ -333,6 +334,7 @@ class BotCommand(commands.Cog):
                 if user is not None:
                     count_failed_problem += 1
                     self.log(type_log = _ALREADY_REVIEWED_, message = p[4:] + ' ' + user + '\n')
+                    continue
                 problem_id = self.problem_name_to_id[p]
                 if self.interator.give_access(problem_id, username, True) == False:
                     count_failed_problem += 1
