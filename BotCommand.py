@@ -292,14 +292,15 @@ class BotCommand(commands.Cog):
             count_done += 1
             if (count_done % 5 == 0):
                 await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
-
-        message = "Successfully gave {0} problems ({2}) to `{1}`".format(len(succeed_problems), username, ' '.join(succeed_problems))
+        message = ""
+        if len(succeed_problems) != 0:
+            message = "Successfully gave {0} problems ({2}) to `{1}`".format(len(succeed_problems), username, ' '.join(succeed_problems))
         
         if (count_failed_problem > 0):
             message += "\nFailed {0} problems. ".format(count_failed_problem)
             message += "Query id = {0}.".format(self.id_query)
         message += "\nPlease checkout " + _FIXLATEX_WEB_ + " to quick fix latex."
-        await current_message.edit(content=message)
+        await current_message.edit(content=message.strip())
 
     @commands.command(brief="Give permission access to reviewers. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
     @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
@@ -348,13 +349,15 @@ class BotCommand(commands.Cog):
             if (count_done % 5 == 0):
                 await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
 
-        message = "Successfully gave {0} problems ({2}) to `{1}`".format(len(succeed_problems), username, ' '.join(succeed_problems))
+        message = ""
+        if len(succeed_problems) != 0:
+            message = "Successfully gave {0} problems ({2}) to `{1}`".format(len(succeed_problems), username, ' '.join(succeed_problems))
         
         if (count_failed_problem > 0):
             message += "\nFailed {0} problems. ".format(count_failed_problem)
             message += "Query id = {0}.".format(self.id_query)
         message += "\nPlease be a careful reviewer."
-        await current_message.edit(content=message)
+        await current_message.edit(content=message.strip())
 
     @commands.command(brief="Get log of give access query.", usage="[queryid]")
     async def getlog(self, ctx, query_id):
