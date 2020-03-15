@@ -341,8 +341,6 @@ class BotCommand(commands.Cog):
                     self.log(type_log = _INTERACTION_FAILED_, message = p[4:])
                 else:
                     succeed_problems.append(p[4:])
-                    if non_white_list_username is not None:
-                        self.db_gave.set(p, str(non_white_list_username))
             count_done += 1
             if (count_done % 5 == 0):
                 await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
