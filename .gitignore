@@ -7,3 +7,4 @@ database/problem_gave_database.json
 database/reviewed_database.json
 database/problem_gave_database.json
 database/user_database.json
+*.json
