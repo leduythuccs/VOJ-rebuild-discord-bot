@@ -88,8 +88,11 @@ class BotCommand(commands.Cog):
         path = _LOG_PATH_ + "{0}_{1}.txt".format(self.id_query, type_log) 
         if os.path.exists(path) == False:
             open(path, "w").close()
-        open(path, "a").write(message.strip() + ' ')
-    
+        if type_log == _ALREADY_GAVE_ or type_log == _ALREADY_REVIEWED_:
+            open(path, "a").write(message.strip() + '\n')
+        else:
+            open(path, "a").write(message.strip() + ' ')
+
     def get_new_commit(self):
         current_commit_state = helper.get_commit_state(self.interator.get_problem_list())
         message = ""
