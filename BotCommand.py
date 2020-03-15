@@ -270,6 +270,7 @@ class BotCommand(commands.Cog):
         count_done = 0
         succeed_problems = []
         for p in problems:
+            count_done += 1
             p = "VOJ-" + p.upper().replace('_', '-')
             if (p not in self.problem_name_to_id):
                 count_failed_problem += 1
@@ -290,7 +291,6 @@ class BotCommand(commands.Cog):
                     succeed_problems.append(p[4:])
                     if non_white_list_username is not None:
                         data_base.set(p, str(non_white_list_username))
-            count_done += 1
             if (count_done % 5 == 0):
                 await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
         message = ""
