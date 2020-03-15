@@ -412,7 +412,7 @@ class BotCommand(commands.Cog):
 
         await ctx.send(msg)
     
-    def format_beautiful_string(user):
+    def format_beautiful_string(self, user):
         if user is None:
             return "NULL"
         user = user.replace('\'', '').replace('[', '').replace(']', '')
