@@ -295,7 +295,7 @@ class BotCommand(commands.Cog):
                 await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
         message = ""
         if len(succeed_problems) != 0:
-            message = "Successfully gave {0} problems ({2}) to `{1}`".format(len(succeed_problems), username, ' '.join(succeed_problems))
+            message = "Successfully gave {0} problems ({2}) to `{1}`".format(len(succeed_problems), usernames, ' '.join(succeed_problems))
         
         if (count_failed_problem > 0):
             message += "\nFailed {0} problems. ".format(count_failed_problem)
