@@ -434,7 +434,7 @@ class BotCommand(commands.Cog):
         t += table.Header('Name', 'Fixer', 'Reviewer')
         t += table.Line()
         index = 0
-        for p in cur:
+        for p in problems:
             p = "VOJ-" + p.upper().replace('_', '-')
             if (p not in self.problem_name_to_id):
                 continue
