@@ -256,7 +256,7 @@ class BotCommand(commands.Cog):
         count_done = 0
         succeed_problems = []
         for p in problems:
-            p = "VOJ-" + p.upper()
+            p = "VOJ-" + p.upper().replace('_', '-')
             if (p not in self.problem_name_to_id):
                 count_failed_problem += 1
                 self.log(type_log = _NOT_FOUND_, message = p)
