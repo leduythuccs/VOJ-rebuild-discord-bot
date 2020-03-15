@@ -409,58 +409,58 @@ class BotCommand(commands.Cog):
 
         await ctx.send(msg)
 
-    @commands.command(brief="Force set reviewed problems", usage="[problems] [username]")
-    @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
-    async def reviewed(self, ctx, problem_set, *args):
-        """Force set reviewed problems
-        """
-        problems, categories = self.get_give_list(problem_set)
+    # @commands.command(brief="Force set reviewed problems", usage="[problems] [username]")
+    # @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
+    # async def reviewed(self, ctx, problem_set, *args):
+    #     """Force set reviewed problems
+    #     """
+    #     problems, categories = self.get_give_list(problem_set)
 
-        username = self.get_usernames(args)
-        print(username)
-        if len(username) == 0:
-            await ctx.send("username not found")
-            return
-        total_problem = len(problems)
-        message = str(total_problem) + " problems."
-        if len(categories) >= 1:
-            message = "Categories: " + categories + ". " + message
-        current_message = await ctx.send(message)
-        for p in problems:
-            p = "VOJ-" + p.upper().replace('_', '-')
-            if (p not in self.problem_name_to_id):
-                continue
-            else:
-                self.db_reviewed.set(p, str(username))
-        message += '\nDone.'
-        await current_message.edit(content=message)
+    #     username = self.get_usernames(args)
+    #     print(username)
+    #     if len(username) == 0:
+    #         await ctx.send("username not found")
+    #         return
+    #     total_problem = len(problems)
+    #     message = str(total_problem) + " problems."
+    #     if len(categories) >= 1:
+    #         message = "Categories: " + categories + ". " + message
+    #     current_message = await ctx.send(message)
+    #     for p in problems:
+    #         p = "VOJ-" + p.upper().replace('_', '-')
+    #         if (p not in self.problem_name_to_id):
+    #             continue
+    #         else:
+    #             self.db_reviewed.set(p, str(username))
+    #     message += '\nDone.'
+    #     await current_message.edit(content=message)
 
-    @commands.command(brief="Force set gave problems", usage="[problems] [username]")
-    @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
-    async def gave(self, ctx, problem_set, *args):
-        """Force set gave problems
-        """
-        problems, categories = self.get_give_list(problem_set)
+    # @commands.command(brief="Force set gave problems", usage="[problems] [username]")
+    # @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
+    # async def gave(self, ctx, problem_set, *args):
+    #     """Force set gave problems
+    #     """
+    #     problems, categories = self.get_give_list(problem_set)
 
-        username = self.get_usernames(args)
-        print(username)
-        if len(username) == 0:
-            await ctx.send("username not found")
-            return
+    #     username = self.get_usernames(args)
+    #     print(username)
+    #     if len(username) == 0:
+    #         await ctx.send("username not found")
+    #         return
 
-        total_problem = len(problems)
-        message = str(total_problem) + " problems."
-        if len(categories) >= 1:
-            message = "Categories: " + categories + ". " + message
-        current_message = await ctx.send(message)
-        for p in problems:
-            p = "VOJ-" + p.upper().replace('_', '-')
-            if (p not in self.problem_name_to_id):
-                continue
-            else:
-                self.db_gave.set(p, str(username))
-        message += '\nDone.'
-        await current_message.edit(content=message)
+    #     total_problem = len(problems)
+    #     message = str(total_problem) + " problems."
+    #     if len(categories) >= 1:
+    #         message = "Categories: " + categories + ". " + message
+    #     current_message = await ctx.send(message)
+    #     for p in problems:
+    #         p = "VOJ-" + p.upper().replace('_', '-')
+    #         if (p not in self.problem_name_to_id):
+    #             continue
+    #         else:
+    #             self.db_gave.set(p, str(username))
+    #     message += '\nDone.'
+    #     await current_message.edit(content=message)
 
 def setup(bot):
     bot.add_cog(BotCommand(bot))
