@@ -29,7 +29,7 @@ class DataUser:
         return self.load()
 
 class ProblemGave:
-    def __init__(self, is_review):
+    def __init__(self, is_review = False):
         self.file_path = 'database/problem_gave_database.json'
         if is_review:
             self.file_path = 'database/reviewed_database.json'
