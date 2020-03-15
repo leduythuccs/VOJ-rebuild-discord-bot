@@ -277,7 +277,7 @@ class BotCommand(commands.Cog):
                     self.log(type_log = type_log, message = p[4:] + ' ' + user + '\n')
                     continue
                 problem_id = self.problem_name_to_id[p]
-                if self.interator.give_access(problem_id, username, True) == False:
+                if self.interator.give_access(problem_id, usernames, True) == False:
                     count_failed_problem += 1
                     self.log(type_log = _INTERACTION_FAILED_, message = p[4:])
                     if is_review:
@@ -310,8 +310,8 @@ class BotCommand(commands.Cog):
         [owner's command]
         """
         usernames = self.get_usernames(args)
-        print(username)
-        if len(username) == 0:
+        print(usernames)
+        if len(usernames) == 0:
             await ctx.send("username not found")
             return
         self.give_access(ctx, problem_set, usernames)
@@ -324,8 +324,8 @@ class BotCommand(commands.Cog):
         [owner's command]
         """
         usernames = self.get_usernames(args)
-        print(username)
-        if len(username) == 0:
+        print(usernames)
+        if len(usernames) == 0:
             await ctx.send("username not found")
             return
         self.give_access(ctx, problem_set, usernames, force = True)
@@ -338,8 +338,8 @@ class BotCommand(commands.Cog):
         [owner's command]
         """
         usernames = self.get_usernames(args)
-        print(username)
-        if len(username) == 0:
+        print(usernames)
+        if len(usernames) == 0:
             await ctx.send("username not found")
             return
         self.give_access(ctx, problem_set, usernames, is_review=True)
@@ -352,8 +352,8 @@ class BotCommand(commands.Cog):
         [owner's command]
         """
         usernames = self.get_usernames(args)
-        print(username)
-        if len(username) == 0:
+        print(usernames)
+        if len(usernames) == 0:
             await ctx.send("username not found")
             return
         self.give_access(ctx, problem_set, usernames, is_review=True, force = True)
