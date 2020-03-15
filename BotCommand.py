@@ -83,7 +83,10 @@ class BotCommand(commands.Cog):
         log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
         self.log_channel = self.bot.get_channel(log_channel_id)
         self.mapping_file_name()
-
+        #clear log
+        logs = os.listdir(_LOG_PATH_)
+        for log in logs:
+            os.remove(_LOG_PATH_ + log)
     def log(self, type_log, message):
         path = _LOG_PATH_ + "{0}_{1}.txt".format(self.id_query, type_log) 
         if os.path.exists(path) == False:
@@ -246,6 +249,7 @@ class BotCommand(commands.Cog):
         non_white_list_username = usernames
         if not is_review:
             non_white_list_username = list(filter(lambda x: x in _WHITE_LIST_USER_NAME_, usernames))
+        print(force, is_review, non_white_list_username)
         type_log = _ALREADY_GAVE_
         data_base = self.db_gave
         if is_review:

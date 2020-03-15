@@ -3,3 +3,7 @@ botlogs/
 __pycache__/
 non_test_problem_set/
 database/user_database.json
+database/problem_gave_database.json
+database/reviewed_database.json
+database/problem_gave_database.json
+database/user_database.json
