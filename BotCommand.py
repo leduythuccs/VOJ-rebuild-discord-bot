@@ -16,6 +16,15 @@ _WAIT_TIME_ = 1 #minute
 _LOG_PATH_ = 'botlogs/'
 _NOT_FOUND_ = 0
 _INTERACTION_FAILED_ = 1
+_ALREADY_GAVE_ = 2
+_ALREADY_REVIEWED_ = 3
+_TITLE_MAP_ = {
+    _NOT_FOUND_ : "List not found problem(s):",
+    _INTERACTION_FAILED_ : "List problem(s) failed when interact with polygon:",
+    _ALREADY_GAVE_ : "List problem(s) already gave:",
+    _ALREADY_REVIEWED_ : "List problem(s) already review: "
+}
+_WHITE_LIST_USER_NAME_ = ['leduykhongngu', 'tuvietthao', 'MLGuy', 'codeforces']
 class Database:
     def __init__(self):
         self.file_path = 'database/user_database.json'
@@ -48,6 +57,8 @@ class BotCommand(commands.Cog):
         self.in_loop = False
         
         self.db = database.DataUser()
+        self.db_gave = database.ProblemGave()
+        self.db_reviewed = database.ProblemGave(is_review = True)
 
     def mapping_file_name(self):
         self.dir_map = {}
@@ -228,11 +239,68 @@ class BotCommand(commands.Cog):
                     continue
             usernames.append(arg)
         return usernames
-
+    
     @commands.command(brief="Give permission access. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
     @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
     async def give(self, ctx, problem_set, *args):
         """Give permission access of problem(s),
+        Currently, "problems" can be: a single name or a problem set.
+        [owner's command]
+        """
+        problems, categories = self.get_give_list(problem_set)
+
+        username = self.get_usernames(args)
+        non_white_list_username = list(filter(lambda x: x in _WHITE_LIST_USER_NAME_, username))
+        print(username)
+        if len(username) == 0:
+            await ctx.send("username not found")
+            return
+
+        self.id_query += 1
+
+        count_failed_problem = 0
+        total_problem = len(problems)
+        message = "Doing " + str(total_problem) + " problems."
+        if len(categories) >= 1:
+            message = "Categories: " + categories + ". " + message
+        await ctx.send(message)
+        current_message = await ctx.send("0/" + str(total_problem))
+        count_done = 0
+        succeed_problems = []
+        for p in problems:
+            p = "VOJ-" + p.upper().replace('_', '-')
+            if (p not in self.problem_name_to_id):
+                count_failed_problem += 1
+                self.log(type_log = _NOT_FOUND_, message = p)
+            else:
+                user = self.db_gave.get(p)
+                if user is not None:
+                    count_failed_problem += 1
+                    self.log(type_log = _ALREADY_GAVE_, message = p[4:] + ' ' + user + '\n')
+                problem_id = self.problem_name_to_id[p]
+                if self.interator.give_access(problem_id, username, True) == False:
+                    count_failed_problem += 1
+                    self.log(type_log = _INTERACTION_FAILED_, message = p[4:])
+                else:
+                    succeed_problems.append(p[4:])
+                    if non_white_list_username is not None:
+                        self.db_gave.set(p, str(non_white_list_username))
+            count_done += 1
+            if (count_done % 5 == 0):
+                await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
+
+        message = "Successfully gave {0} problems ({2}) to `{1}`".format(len(succeed_problems), username, ' '.join(succeed_problems))
+        
+        if (count_failed_problem > 0):
+            message += "\nFailed {0} problems. ".format(count_failed_problem)
+            message += "Query id = {0}.".format(self.id_query)
+        message += "\nPlease checkout " + _FIXLATEX_WEB_ + " to quick fix latex."
+        await current_message.edit(content=message)
+
+    @commands.command(brief="Give permission access to reviewers. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
+    @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
+    async def review(self, ctx, problem_set, *args):
+        """Give permission access of problem(s) to reviewers,
         Currently, "problems" can be: a single name or a problem set.
         [owner's command]
         """
@@ -248,9 +316,9 @@ class BotCommand(commands.Cog):
 
         count_failed_problem = 0
         total_problem = len(problems)
-        message = "Doing " + str(total_problem) + " problems, it might takes a couple of minutes"
+        message = "Doing " + str(total_problem) + " problems."
         if len(categories) >= 1:
-            message = "Problem categories: " + categories + ". " + message
+            message = "Categories: " + categories + ". " + message
         await ctx.send(message)
         current_message = await ctx.send("0/" + str(total_problem))
         count_done = 0
@@ -261,29 +329,35 @@ class BotCommand(commands.Cog):
                 count_failed_problem += 1
                 self.log(type_log = _NOT_FOUND_, message = p)
             else:
+                user = self.db_reviewed.get(p)
+                if user is not None:
+                    count_failed_problem += 1
+                    self.log(type_log = _ALREADY_REVIEWED_, message = p[4:] + ' ' + user + '\n')
                 problem_id = self.problem_name_to_id[p]
                 if self.interator.give_access(problem_id, username, True) == False:
                     count_failed_problem += 1
                     self.log(type_log = _INTERACTION_FAILED_, message = p[4:])
                 else:
                     succeed_problems.append(p[4:])
+                    if non_white_list_username is not None:
+                        self.db_gave.set(p, str(non_white_list_username))
             count_done += 1
             if (count_done % 5 == 0):
                 await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
 
-        message = "Successfully gave {0} problem(s) ({2}) to `{1}`".format(len(succeed_problems), username, ' '.join(succeed_problems))
+        message = "Successfully gave {0} problems ({2}) to `{1}`".format(len(succeed_problems), username, ' '.join(succeed_problems))
         
         if (count_failed_problem > 0):
-            message += "\nFailed {0} problem(s). ".format(count_failed_problem)
+            message += "\nFailed {0} problems. ".format(count_failed_problem)
             message += "Query id = {0}.".format(self.id_query)
-        message += "\nPlease checkout " + _FIXLATEX_WEB_ + " to quick fix latex."
+        message += "\nPlease be a careful reviewer."
         await current_message.edit(content=message)
 
     @commands.command(brief="Get log of give access query.", usage="[queryid]")
     async def getlog(self, ctx, query_id):
         """Get failed problems from log file of given id"""
         found = False
-        for type_log in range(0, 2):
+        for type_log in range(0, 4):
             path = _LOG_PATH_ + "{0}_{1}.txt".format(query_id, type_log) 
             if (os.path.exists(path) == False):
                 continue
@@ -292,9 +366,8 @@ class BotCommand(commands.Cog):
             if (len(message) == 0):
                 continue
             found = True
-            title = "List not found problem(s):" 
-            if type_log == _INTERACTION_FAILED_:
-                title = "List problem(s) failed when interact with polygon:"
+            title = _TITLE_MAP_[type_log]
+
             paginator.paginate(self.bot, self.log_channel, message, title)
         if not found:
             await ctx.send("Query not found")
@@ -329,6 +402,59 @@ class BotCommand(commands.Cog):
         msg = '```\n' + str(t) + '\n```'
 
         await ctx.send(msg)
+
+    @commands.command(brief="Force set reviewed problems", usage="[problems] [username]")
+    @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
+    async def reviewed(self, ctx, problem_set, *args):
+        """Force set reviewed problems
+        """
+        problems, categories = self.get_give_list(problem_set)
+
+        username = self.get_usernames(args)
+        print(username)
+        if len(username) == 0:
+            await ctx.send("username not found")
+            return
+        total_problem = len(problems)
+        message = str(total_problem) + " problems."
+        if len(categories) >= 1:
+            message = "Categories: " + categories + ". " + message
+        current_message = await ctx.send(message)
+        for p in problems:
+            p = "VOJ-" + p.upper().replace('_', '-')
+            if (p not in self.problem_name_to_id):
+                continue
+            else:
+                self.db_reviewed.set(p, str(username))
+        message += '\nDone.'
+        await current_message.edit(content=message)
+
+    @commands.command(brief="Force set gave problems", usage="[problems] [username]")
+    @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
+    async def gave(self, ctx, problem_set, *args):
+        """Force set gave problems
+        """
+        problems, categories = self.get_give_list(problem_set)
+
+        username = self.get_usernames(args)
+        print(username)
+        if len(username) == 0:
+            await ctx.send("username not found")
+            return
+
+        total_problem = len(problems)
+        message = str(total_problem) + " problems."
+        if len(categories) >= 1:
+            message = "Categories: " + categories + ". " + message
+        current_message = await ctx.send(message)
+        for p in problems:
+            p = "VOJ-" + p.upper().replace('_', '-')
+            if (p not in self.problem_name_to_id):
+                continue
+            else:
+                self.db_gave.set(p, str(username))
+        message += '\nDone.'
+        await current_message.edit(content=message)
 
 def setup(bot):
     bot.add_cog(BotCommand(bot))
