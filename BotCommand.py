@@ -363,7 +363,7 @@ class BotCommand(commands.Cog):
         await current_message.edit(content=message.strip())
 
     @commands.command(brief="Get log of give access query.", usage="[queryid]")
-    async def getlog(self, ctx, query_id):
+    async def get_log(self, ctx, query_id):
         """Get failed problems from log file of given id"""
         found = False
         for type_log in range(0, 4):
@@ -411,7 +411,43 @@ class BotCommand(commands.Cog):
         msg = '```\n' + str(t) + '\n```'
 
         await ctx.send(msg)
+    
+    def format_beautiful_string(user):
+        if user is None:
+            return "NULL"
+        user = user.replace('\'', '').replace('[', '').replace(']', '')
+        return user
 
+    @commands.command(brief="Get problem's info")
+    async def problem_info(self, ctx, problem_set):
+        problems, categories = self.get_give_list(problem_set)
+        total_problem = len(problems)
+        message = str(total_problem) + " problems."
+        if len(categories) >= 1:
+            message = "Categories: " + categories + ". " + message
+        if total_problem > 26:
+            message = "Too many problems to show. " + message
+            await ctx.send(message)
+            return
+        style = table.Style('{:<}  {:<}  {:<}')
+        t = table.Table(style)
+        t += table.Header('Name', 'Fixer', 'Reviewer')
+        t += table.Line()
+        index = 0
+        for p in cur:
+            p = "VOJ-" + p.upper().replace('_', '-')
+            if (p not in self.problem_name_to_id):
+                continue
+            fixer = self.db_gave.get(p)
+            fixer = format_beautiful_string(fixer)
+            reviewer = self.db_reviewed.get(p)
+            reviewer = format_beautiful_string(reviewer)
+
+            t += table.Data(p[4:], fixer, reviewer)
+            
+        msg = message + '```\n' + str(t) + '\n```'
+
+        await ctx.send(msg)
     # @commands.command(brief="Force set reviewed problems", usage="[problems] [username]")
     # @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
     # async def reviewed(self, ctx, problem_set, *args):
