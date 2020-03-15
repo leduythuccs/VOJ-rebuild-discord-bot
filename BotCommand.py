@@ -439,9 +439,9 @@ class BotCommand(commands.Cog):
             if (p not in self.problem_name_to_id):
                 continue
             fixer = self.db_gave.get(p)
-            fixer = format_beautiful_string(fixer)
+            fixer = self.format_beautiful_string(fixer)
             reviewer = self.db_reviewed.get(p)
-            reviewer = format_beautiful_string(reviewer)
+            reviewer = self.format_beautiful_string(reviewer)
 
             t += table.Data(p[4:], fixer, reviewer)
             
