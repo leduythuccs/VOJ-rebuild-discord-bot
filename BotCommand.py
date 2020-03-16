@@ -248,7 +248,7 @@ class BotCommand(commands.Cog):
     async def give_access(self, ctx, problem_set, usernames, force = False, is_review=False):
         non_white_list_username = usernames
         if not is_review:
-            non_white_list_username = list(filter(lambda x: x in _WHITE_LIST_USER_NAME_, usernames))
+            non_white_list_username = list(filter(lambda x: x not in _WHITE_LIST_USER_NAME_, usernames))
         print(force, is_review, non_white_list_username)
         type_log = _ALREADY_GAVE_
         data_base = self.db_gave
@@ -277,7 +277,7 @@ class BotCommand(commands.Cog):
                 self.log(type_log = _NOT_FOUND_, message = p)
             else:
                 user = data_base.get(p)
-                if (user is not None) and (not force):
+                if (user is not None) and (not force) and (non_white_list_username is not None):
                     count_failed_problem += 1
                     self.log(type_log = type_log, message = p[4:] + ' ' + user + '\n')
                     continue
