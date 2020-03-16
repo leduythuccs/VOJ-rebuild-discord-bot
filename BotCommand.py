@@ -277,7 +277,7 @@ class BotCommand(commands.Cog):
                 self.log(type_log = _NOT_FOUND_, message = p)
             else:
                 user = data_base.get(p)
-                if (user is not None) and (not force) and (non_white_list_username is not None):
+                if (user is not None) and (not force) and (len(non_white_list_username) != 0):
                     count_failed_problem += 1
                     self.log(type_log = type_log, message = p[4:] + ' ' + user + '\n')
                     continue
@@ -285,11 +285,11 @@ class BotCommand(commands.Cog):
                 if self.interator.give_access(problem_id, usernames, True) == False:
                     count_failed_problem += 1
                     self.log(type_log = _INTERACTION_FAILED_, message = p[4:])
-                    if is_review:
+                    if is_review and (len(non_white_list_username) != 0):
                         data_base.set(p, str(non_white_list_username))
                 else:
                     succeed_problems.append(p[4:])
-                    if non_white_list_username is not None:
+                    if len(non_white_list_username) != 0:
                         data_base.set(p, str(non_white_list_username))
             if (count_done % 5 == 0):
                 await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
