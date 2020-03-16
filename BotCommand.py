@@ -59,6 +59,7 @@ class BotCommand(commands.Cog):
         self.db = database.DataUser()
         self.db_gave = database.ProblemGave()
         self.db_reviewed = database.ProblemGave(is_review = True)
+        self.db_deleted = database.DeletedProblem()
 
     def mapping_file_name(self):
         self.dir_map = {}
@@ -272,7 +273,7 @@ class BotCommand(commands.Cog):
         for p in problems:
             count_done += 1
             p = "VOJ-" + p.upper().replace('_', '-')
-            if (p not in self.problem_name_to_id):
+            if (p not in self.problem_name_to_id) or (force == False and self.db_deleted.is_deleted(p)):
                 count_failed_problem += 1
                 self.log(type_log = _NOT_FOUND_, message = p)
             else:
@@ -393,7 +394,7 @@ class BotCommand(commands.Cog):
         await ctx.send("Polygon username " + polygon_username + s + " successfully set to "  + member.display_name)
 
     @commands.command(brief="Get staff list")
-    async def list(self, ctx):
+    async def staff_list(self, ctx):
         cur = self.db.list()
         style = table.Style('{:>}  {:<}  {:<}')
         t = table.Table(style)
@@ -417,6 +418,8 @@ class BotCommand(commands.Cog):
             return "NULL"
         user = user.replace('\'', '').replace('[', '').replace(']', '')
         return user
+
+
 
     @commands.command(brief="Get problem's info")
     async def problem_info(self, ctx, problem_set):
@@ -442,64 +445,40 @@ class BotCommand(commands.Cog):
             fixer = self.format_beautiful_string(fixer)
             reviewer = self.db_reviewed.get(p)
             reviewer = self.format_beautiful_string(reviewer)
+            if self.db_deleted.is_deleted(p):
+                fixer = 'DELETED'
+                reviewer = 'DELETED'
 
             t += table.Data(p[4:], fixer, reviewer)
             
         msg = message + '```\n' + str(t) + '\n```'
 
         await ctx.send(msg)
-    # @commands.command(brief="Force set reviewed problems", usage="[problems] [username]")
-    # @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
-    # async def reviewed(self, ctx, problem_set, *args):
-    #     """Force set reviewed problems
-    #     """
-    #     problems, categories = self.get_give_list(problem_set)
 
-    #     username = self.get_usernames(args)
-    #     print(username)
-    #     if len(username) == 0:
-    #         await ctx.send("username not found")
-    #         return
-    #     total_problem = len(problems)
-    #     message = str(total_problem) + " problems."
-    #     if len(categories) >= 1:
-    #         message = "Categories: " + categories + ". " + message
-    #     current_message = await ctx.send(message)
-    #     for p in problems:
-    #         p = "VOJ-" + p.upper().replace('_', '-')
-    #         if (p not in self.problem_name_to_id):
-    #             continue
-    #         else:
-    #             self.db_reviewed.set(p, str(username))
-    #     message += '\nDone.'
-    #     await current_message.edit(content=message)
+    @commands.command(brief="Delete a problems.")
+    @commands.is_owner()
+    async def delete(self, ctx, problem_name, *args):
+        reason = ' '.join(map(str, args))
+        if reason == '':
+            reason = 'Unknow'
+        self.db_deleted.set(problem_name, reason)
+        await ctx.send('Deleted ' + problem_name + '.Reason: ' + reason)
+    
+    @commands.command(brief="Get list deleted problems.")
+    async def deleted_list(self, ctx):
+        cur = self.db_deleted.list()
+        style = table.Style('{:<}  {:<}')
+        t = table.Table(style)
+        t += table.Header('Name', 'Reason')
+        t += table.Line()
+        index = 0
+        for p in cur:
+            t += table.Data(p, cur[p])
+            
+        msg = '```\n' + str(t) + '\n```'
 
-    # @commands.command(brief="Force set gave problems", usage="[problems] [username]")
-    # @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
-    # async def gave(self, ctx, problem_set, *args):
-    #     """Force set gave problems
-    #     """
-    #     problems, categories = self.get_give_list(problem_set)
+        await ctx.send(msg)
 
-    #     username = self.get_usernames(args)
-    #     print(username)
-    #     if len(username) == 0:
-    #         await ctx.send("username not found")
-    #         return
-
-    #     total_problem = len(problems)
-    #     message = str(total_problem) + " problems."
-    #     if len(categories) >= 1:
-    #         message = "Categories: " + categories + ". " + message
-    #     current_message = await ctx.send(message)
-    #     for p in problems:
-    #         p = "VOJ-" + p.upper().replace('_', '-')
-    #         if (p not in self.problem_name_to_id):
-    #             continue
-    #         else:
-    #             self.db_gave.set(p, str(username))
-    #     message += '\nDone.'
-    #     await current_message.edit(content=message)
 
 def setup(bot):
     bot.add_cog(BotCommand(bot))
