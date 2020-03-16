@@ -44,13 +44,16 @@ class DeletedProblem:
         with open(self.file_path, "w", encoding="utf-8") as json_file:
             json.dump(cur, json_file)
     def is_deleted(self, problem_name):
+
         problem_name = format_name(problem_name)
-        return problem_name in cur
-        
+        return problem_name in self.load()
+
     def set(self, problem_name, reason):
         cur = self.load()
         problem_name = format_name(problem_name)
         cur[problem_name] = reason
+        self.save(cur)
+        
     def list(self):
         return self.load()
 class ProblemGave:
