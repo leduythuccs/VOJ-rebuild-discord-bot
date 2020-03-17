@@ -64,6 +64,12 @@ class BotControlCommand(commands.Cog):
         await ctx.send('Restarting...')
         os.execv(sys.executable, [sys.executable] + sys.argv)
 
+    @commands.command(brief="Update bot & restart")
+    @commands.is_owner()
+    async def update_restart(self, ctx):
+        self.git_pull(ctx)
+        self.restart(ctx)
+        
     @commands.command(brief='Get git information')
     async def git(self, ctx):
         """Replies with git information."""
@@ -72,8 +78,9 @@ class BotControlCommand(commands.Cog):
     @commands.command(brief='Incorporates changes from the remote repository')
     @commands.is_owner()
     async def git_pull(self, ctx):
+        mess = await ctx.send('Getting changes from the remote repository...')
         result = subprocess.run(['git', 'pull'], stdout=subprocess.PIPE).stdout.decode('utf-8').strip()
-        await ctx.send('```\n' + result + '\n```')
+        await mess.edit(content = '```\n' + result + '\n```')
 
 def setup(bot):
     bot.add_cog(BotControlCommand(bot))

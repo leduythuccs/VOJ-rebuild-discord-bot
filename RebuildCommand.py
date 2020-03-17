@@ -263,6 +263,8 @@ class RebuildCommand(commands.Cog):
                 if self.interator.give_access(problem_id, usernames, True) == False:
                     count_failed_problem += 1
                     self.log(type_log = _INTERACTION_FAILED_, message = p[4:])
+                    print("check ", is_review, len(non_white_list_username) != 0)
+                    print(non_white_list_username)
                     if is_review and (len(non_white_list_username) != 0):
                         data_base.set(p, str(non_white_list_username))
                 else:
