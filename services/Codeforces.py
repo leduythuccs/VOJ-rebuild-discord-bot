@@ -21,14 +21,19 @@ class CodeforcesInteracter:
         csrf_token_pattern = r'name=["\']csrf_token["\'] value=["\'](.*?)["\']'
         ftaa_pattern = r'window._ftaa = ["\'](.*?)["\']'
         bfaa_pattern = r'window._bfaa = ["\'](.*?)["\']'
+        
+        self.csrf_token = re.findall(csrf_token_pattern, result.text)[0]
+        self.ftaa = re.findall(ftaa_pattern, result.text)[0]
+        self.bfaa = re.findall(bfaa_pattern, result.text)[0]
         data = {
-            'csrf_token': re.findall(csrf_token_pattern, result.text)[0],
+            'csrf_token': self.csrf_token,
+            'ftaa': self.ftaa,
+            'bfaa': self.bfaa,
+            '_tta': 487,
+            #stuff
             'action': 'enter',
-            'ftaa': re.findall(ftaa_pattern, result.text)[0],
-            'bfaa': re.findall(bfaa_pattern, result.text)[0],
             'handleOrEmail': self.username,
             'password': self.password,
-            '_tta': 487,
         }
         login_result = self.session.post(url, data=data, headers=self.headers)
         return self.check_login()
@@ -52,13 +57,10 @@ class CodeforcesInteracter:
     def create_mashup(self, contest_name, problem_json, duration = 10):
         url = 'https://codeforces.com/mashup/new'
         result = self.session.get(url, headers=self.headers)
-        csrf_token_pattern = r'name=["\']csrf_token["\'] value=["\'](.*?)["\']'
-        ftaa_pattern = r'window._ftaa = ["\'](.*?)["\']'
-        bfaa_pattern = r'window._bfaa = ["\'](.*?)["\']'
         data = {
-            'csrf_token': re.findall(csrf_token_pattern, result.text)[0],
-            'ftaa': re.findall(ftaa_pattern, result.text)[0],
-            'bfaa': re.findall(bfaa_pattern, result.text)[0],
+            'csrf_token': self.csrf_token,
+            'ftaa': self.ftaa,
+            'bfaa': self.bfaa,
             '_tta': 377,
             #stuff
             'action': 'saveMashup',
@@ -78,13 +80,10 @@ class CodeforcesInteracter:
     def add_mashup_to_group(self, mashup_id, group_id):
         url = 'https://codeforces.com/group/{0}/contests/add'.format(group_id)
         result = self.session.get(url, headers=self.headers)
-        csrf_token_pattern = r'name=["\']csrf_token["\'] value=["\'](.*?)["\']'
-        ftaa_pattern = r'window._ftaa = ["\'](.*?)["\']'
-        bfaa_pattern = r'window._bfaa = ["\'](.*?)["\']'
         data = {
-            'csrf_token': re.findall(csrf_token_pattern, result.text)[0],
-            'ftaa': re.findall(ftaa_pattern, result.text)[0],
-            'bfaa': re.findall(bfaa_pattern, result.text)[0],
+            'csrf_token': self.csrf_token,
+            'ftaa': self.ftaa,
+            'bfaa': self.bfaa,
             '_tta': 377,
             #stuff
             'action' : 'addContest',
@@ -96,4 +95,5 @@ class CodeforcesInteracter:
         r = self.session.get(url, headers = self.headers, allow_redirects = False)
         if r.status_code == 200:
             return url
+    def edit_mashup_info(self, mashup_id):
         return None

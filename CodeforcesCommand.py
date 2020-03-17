@@ -95,6 +95,14 @@ class CodeforcesCommand(commands.Cog):
             message = "Contest link: " + url
         await ctx.send(message)
     
+    @commands.command(brief="Edit mashup info")
+    @commands.is_owner()
+    async def edit_info_mashup(self, ctx, mashup_id):
+        if not mashup_id.isdigit():
+            await ctx.send('Mashup id must be a number.')
+            return
+        await ctx.send("This command is developing, pls return later.")
+        
     @commands.command(brief="Re-login to codeforces") 
     async def re_login_cf(self, ctx):
         if self.interator.login():
