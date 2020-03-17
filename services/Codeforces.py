@@ -104,6 +104,7 @@ class CodeforcesInteracter:
         duration_pattern = r'name=["\']duration["\'] value=["\'](.*?)["\']'
         default_duration = re.findall(duration_pattern, result.text)[0]
 
+        print(default_name, default_duration)
         data = {
             'csrf_token': self.csrf_token,
             'ftaa': self.ftaa,

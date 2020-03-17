@@ -132,7 +132,6 @@ class CodeforcesCommand(commands.Cog):
             return
         if not difficulty.isdigit() or int(difficulty) < 0 or int(difficulty) > 5:
             await ctx.send('Difficulty must be a integer in [0, 5]')
-        await ctx.send("This command is developing, pls return later.")
         if len(season) == 0:
             season = ''
         else:
@@ -144,7 +143,7 @@ class CodeforcesCommand(commands.Cog):
             return
         self.interator.edit_mashup_info(mashup_id, contest_type, difficulty, season)
         await ctx.send('Done. Please check the result, the bot cannot confirm it.')
-        
+
     @commands.command(brief="Re-login to codeforces") 
     async def re_login_cf(self, ctx):
         if self.interator.login():
