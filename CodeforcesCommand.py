@@ -71,8 +71,6 @@ class CodeforcesCommand(commands.Cog):
             return
         print(contest_name)
         print(problem_json)
-        await ctx.send('developing, pls return later')
-        return
         res, contest_id = self.interator.create_mashup(contest_name, problem_json, duration)
         if not res:
             ctx.send('Error when interactive with CF: ' + str(contest_id))
