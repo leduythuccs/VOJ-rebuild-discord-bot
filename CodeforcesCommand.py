@@ -12,7 +12,7 @@ from helper import table
 from helper import problem_set_helper
 import requests
 import time
-class RebuildCommand(commands.Cog):
+class CodeforcesCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         username = os.getenv('CODEFORCES_USERNAME')
