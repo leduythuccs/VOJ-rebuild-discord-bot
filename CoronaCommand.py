@@ -44,11 +44,11 @@ class CoronaCommand(commands.Cog):
             return    
         style = table.Style('{:<}  {:<}  {:<}')
         t = table.Table(style)
-        t += table.Header(' ', 'Vietnam', 'Global')
+        t += table.Header('Corona :(', 'Vietnam', 'Global')
         t += table.Line()
         t += table.Data('Cases', data['vietnam']['cases'], data['global']['cases'])
         t += table.Data('Recovered', data['vietnam']['recovered'], data['global']['recovered'])
-        t += table.Data('deaths', data['vietnam']['deaths'], data['global']['deaths'])
+        t += table.Data('Deaths', data['vietnam']['deaths'], data['global']['deaths'])
         msg = "Some statistics about total corona virus cases: \n" '```\n' + str(t) + '\n```'
 
         await ctx.send(msg)
