@@ -44,6 +44,7 @@ class RebuildCommand(commands.Cog):
         self.start_time = 0
         self.in_loop = False
         
+        self.helper = problem_set_helper.problem_set_helper()
         self.db = database.DataUser()
         self.db_gave = database.ProblemGave()
         self.db_reviewed = database.ProblemGave(is_review = True)
@@ -57,7 +58,6 @@ class RebuildCommand(commands.Cog):
         self.problem_name_to_id = helper.get_problem_name_id(problem_json)
         log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
         self.log_channel = self.bot.get_channel(log_channel_id)
-        problem_set_helper.mapping_file_name()
         #clear log
         logs = os.listdir(_LOG_PATH_)
         for log in logs:
@@ -71,7 +71,7 @@ class RebuildCommand(commands.Cog):
             open(path, "a").write(message.strip() + '\n')
         else:
             open(path, "a").write(message.strip() + ' ')
-    
+
     def get_new_commit(self):
         current_commit_state = helper.get_commit_state(self.interator.get_problem_list())
         message = ""
@@ -130,7 +130,7 @@ class RebuildCommand(commands.Cog):
             x = args[0]
             while x[-1] == '/':
                 x = x[:-1]
-            path += problem_set_helper.format_name(x) + '/'
+            path += self.helper.format_name(x) + '/'
         print(path)
         if os.path.exists(path) == False:
             await ctx.send("Path not found")
@@ -167,7 +167,7 @@ class RebuildCommand(commands.Cog):
             type_log = _ALREADY_REVIEWED_
             data_base = self.db_reviewed
         
-        problems, categories = problem_set_helper.get_give_list(problem_set)
+        problems, categories = self.helper.get_give_list(problem_set)
         problems = list(set(problems)) # erase duplicate problems
         self.id_query += 1
 
@@ -333,7 +333,7 @@ class RebuildCommand(commands.Cog):
 
     @commands.command(brief="Get problem's info")
     async def problem_info(self, ctx, problem_set):
-        problems, categories = problem_set_helper.get_give_list(problem_set)
+        problems, categories = self.helper.get_give_list(problem_set)
         problems = list(set(problems)) # erase duplicate problems
         total_problem = len(problems)
         message = str(total_problem) + " problems."

@@ -17,15 +17,17 @@ class CodeforcesCommand(commands.Cog):
         self.bot = bot
         username = os.getenv('CODEFORCES_USERNAME')
         password = os.getenv('CODEFORCES_PASSWORD')
+        
+        self.helper = problem_set_helper.problem_set_helper()
         self.interator = Codeforces.CodeforcesInteracter(username, password)
-    @commands.Cog.listener()
-    async def on_ready(self):
-        problem_set_helper.mapping_file_name()
+    # @commands.Cog.listener()
+    # async def on_ready(self):
+    #     problem_set_helper.mapping_file_name()
 
     @commands.command(brief="Create a mashup by problemset", usage="[Contest name] [problem_set] [duration]")
     @commands.is_owner()
     async def create_mashup(self, ctx, contest_name, problem_set, duration):
-        problems, categories = problem_set_helper.get_give_list(problem_set)
+        problems, categories = self.helper.get_give_list(problem_set)
         await ctx.send('This commnand is developping, pls comeback later')
         pass
 
