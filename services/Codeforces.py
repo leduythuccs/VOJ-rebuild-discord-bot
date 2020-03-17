@@ -95,5 +95,59 @@ class CodeforcesInteracter:
         r = self.session.get(url, headers = self.headers, allow_redirects = False)
         if r.status_code == 200:
             return url
-    def edit_mashup_info(self, mashup_id):
-        return None
+    def edit_mashup_info(self, mashup_id, contest_type, difficulty, season = ''):
+        url = 'https://codeforces.com/gym/edit/' + str(mashup_id)
+        result = self.session.get(url, headers = self.headers)
+        contest_name_pattern = r'name=["\']englishName["\'] value=["\'](.*?)["\']'
+        default_name = re.findall(contest_name_pattern, result.text)[0]
+        
+        duration_pattern = r'name=["\']duration["\'] value=["\'](.*?)["\']'
+        default_duration = re.findall(duration_pattern, result.text)[0]
+
+        data = {
+            'csrf_token': self.csrf_token,
+            'ftaa': self.ftaa,
+            'bfaa': self.bfaa,
+            '_tta': '310',
+            # real params go here
+            'contestEditFormSubmitted': 'true',
+            'clientTimezoneOffset': '420',
+            'englishName': default_name,
+            'russianName': default_name,
+            'untaggedContestType': contest_type,
+            'initialDatetime': '',
+            'startDay': '',
+            'startTime': '',
+            'duration': default_duration,
+            'visibility': 'PRIVATE',
+            'participationType': 'PERSONS_AND_TEAMS',
+            'freezeDuration': '0',
+            'initialUnfreezeTime': '',
+            'unfreezeDay': '',
+            'unfreezeTime': '',
+            'allowedPractice': 'on',
+            'allowedVirtual': 'on',
+            'allowedSelfRegistration': 'on',
+            'allowedViewForNonRegistered': 'on',
+            'allowedCommonStatus': 'on',
+            'viewTestdataPolicy': 'NONE',
+            'submitViewPolicy': 'NONE',
+            'languages': 'true',
+            'allowedStatements': 'on',
+            'allowedStandings': 'on',
+            'season': season,
+            'contestType': 'Training Contest',
+            'icpcRegion': '',
+            'country': 'Vietnam',
+            'city': '',
+            'difficulty': difficulty,
+            'websiteUrl': '',
+            'englishDescription': '',
+            'russianDescription': '',
+            'englishRegistrationConfirmation': '',
+            'russianRegistrationConfirmation': '',
+            'englishLogo': '',
+            'russianLogo': ''
+        }
+        r = self.session.post(url, params = data, headers = self.headers)
+        print(r)

@@ -12,6 +12,35 @@ from helper import table
 from helper import problem_set_helper
 import requests
 import time
+seasons = {
+    '2020-2021',
+    '2019-2020',
+    '2018-2019',
+    '2017-2018',
+    '2016-2017',
+    '2015-2016',
+    '2014-2015',
+    '2013-2014',
+    '2012-2013',
+    '2011-2012',
+    '2010-2011',
+    '2009-2010',
+    '2008-2009',
+    '2007-2008',
+    '2006-2007',
+    '2005-2006',
+    '2004-2005',
+    '2003-2004',
+    '2002-2003',
+    '2001-2002',
+    '2000-2001',
+    '1999-2000',
+    '1998-1999',
+    '1997-1998',
+    '1996-1997',
+    '1995-1996',
+    '1991-1992'
+}
 class CodeforcesCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -97,11 +126,24 @@ class CodeforcesCommand(commands.Cog):
     
     @commands.command(brief="Edit mashup info")
     @commands.is_owner()
-    async def edit_info_mashup(self, ctx, mashup_id):
+    async def edit_info_mashup(self, ctx, mashup_id, contest_type, difficulty, *season):
         if not mashup_id.isdigit():
             await ctx.send('Mashup id must be a number.')
             return
+        if not difficulty.isdigit() or int(difficulty) < 0 or int(difficulty) > 5:
+            await ctx.send('Difficulty must be a integer in [0, 5]')
         await ctx.send("This command is developing, pls return later.")
+        if len(season) == 0:
+            season = ''
+        else:
+            season = '-'.join(season)
+            if season not in seasons:
+                await ctx.send('Season {0} not found.'.format(season))
+        if contest_type != 'IOI' and contest_type != 'ICPC':
+            await ctx.send("Contest type must be `IOI` or `ICPC`")
+            return
+        self.interator.edit_mashup_info(mashup_id, contest_type, difficulty, season)
+        await ctx.send('Done. Please check the result, the bot cannot confirm it.')
         
     @commands.command(brief="Re-login to codeforces") 
     async def re_login_cf(self, ctx):
