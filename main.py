@@ -14,6 +14,7 @@ bot = commands.Bot(command_prefix=';rebuild ')
 print(bot.command_prefix)
 bot.load_extension("RebuildCommand")
 bot.load_extension("BotControlCommand")
+bot.load_extension("CoronaCommand")
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
