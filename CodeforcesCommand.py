@@ -75,7 +75,7 @@ class CodeforcesCommand(commands.Cog):
         if not res:
             ctx.send('Error when interactive with CF: ' + str(contest_id))
             return
-        message = 'Mashup name = ' + contest_name + '.\nMashup id = ' + contest_id + '.\n'
+        message = 'Mashup name = ' + contest_name + '.\nMashup id = ' + str(contest_id) + '.\n'
         message += 'Please add those links to admin sheet:' + self.get_link_codeforces() 
         await ctx.send(message)
     @commands.command(brief="Re-login to codeforces") 
