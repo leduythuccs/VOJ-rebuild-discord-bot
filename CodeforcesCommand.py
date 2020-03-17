@@ -90,7 +90,7 @@ class CodeforcesCommand(commands.Cog):
             return
         url = self.interator.add_mashup_to_group(mashup_id, self.group_id)
         if url == None:
-            message = "Cannot add {0} to VNOI CF group."
+            message = "Cannot add {0} to VNOI CF group.".format(mashup_id)
         else:
             message = "Contest link: " + url
         await ctx.send(message)

@@ -77,7 +77,13 @@ class CodeforcesInteracter:
         return False, str(r)
     def add_mashup_to_group(self, mashup_id, group_id):
         url = 'https://codeforces.com/group/{0}/contests/add'.format(group_id)
+        result = self.session.get(url, headers=self.headers)
         data = {
+            'csrf_token': re.findall(csrf_token_pattern, result.text)[0],
+            'ftaa': re.findall(ftaa_pattern, result.text)[0],
+            'bfaa': re.findall(bfaa_pattern, result.text)[0],
+            '_tta': 377,
+            #stuff
             'action' : 'addContest',
             'contestId' : mashup_id
         }
