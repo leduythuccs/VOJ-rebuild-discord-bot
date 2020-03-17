@@ -67,9 +67,9 @@ class BotControlCommand(commands.Cog):
     @commands.command(brief="Update bot & restart")
     @commands.is_owner()
     async def update_restart(self, ctx):
-        self.git_pull(ctx)
-        self.restart(ctx)
-        
+        await self.git_pull(ctx)
+        await self.restart(ctx)
+
     @commands.command(brief='Get git information')
     async def git(self, ctx):
         """Replies with git information."""
