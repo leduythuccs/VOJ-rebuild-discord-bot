@@ -34,7 +34,7 @@ class CoronaCommand(commands.Cog):
         if data is None:
             await ctx.send('API Failed')
             return
-        return ctx.send(data[typ]['cases'] + ' cases.')
+        await ctx.send(data[typ]['cases'] + ' cases.')
     @commands.command(brief="Get full stastistic")
     async def stats(self, ctx):
         
