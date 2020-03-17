@@ -6,6 +6,7 @@ import time
 import subprocess
 import textwrap
 import sys
+from helper import helper
 # Adapted from TLE sources.
 # https://github.com/cheran-senthil/TLE/blob/master/tle/cogs/meta.py#L15
 def git_history():
