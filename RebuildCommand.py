@@ -38,7 +38,7 @@ class Database:
         if id_discord in self.cur:
             self.cur.pop(id_discord)
     
-class BotCommand(commands.Cog):
+class RebuildCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         username = os.getenv('POLYGON_USERNAME')
@@ -481,4 +481,4 @@ class BotCommand(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(BotCommand(bot))
+    bot.add_cog(RebuildCommand(bot))
