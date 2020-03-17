@@ -49,7 +49,7 @@ class CoronaCommand(commands.Cog):
         t += table.Data('Cases', data['vietnam']['cases'], data['global']['cases'])
         t += table.Data('Recovered', data['vietnam']['recovered'], data['global']['recovered'])
         t += table.Data('deaths', data['vietnam']['deaths'], data['global']['deaths'])
-        msg = "Some statistics about corona case: \n" '```\n' + str(t) + '\n```'
+        msg = "Some statistics about total corona virus cases: \n" '```\n' + str(t) + '\n```'
 
         await ctx.send(msg)
     
