@@ -2,6 +2,9 @@ import re
 import requests
 import os
 
+csrf_token_pattern = r'name=["\']csrf_token["\'] value=["\'](.*?)["\']'
+ftaa_pattern = r'window._ftaa = ["\'](.*?)["\']'
+bfaa_pattern = r'window._bfaa = ["\'](.*?)["\']'
 class CodeforcesInteracter:
     def __init__(self, username, password):
         self.username = username
@@ -18,9 +21,6 @@ class CodeforcesInteracter:
     def login(self):
         url = 'https://codeforces.com/enter'
         result = self.session.get(url, headers=self.headers)
-        csrf_token_pattern = r'name=["\']csrf_token["\'] value=["\'](.*?)["\']'
-        ftaa_pattern = r'window._ftaa = ["\'](.*?)["\']'
-        bfaa_pattern = r'window._bfaa = ["\'](.*?)["\']'
         
         self.csrf_token = re.findall(csrf_token_pattern, result.text)[0]
         self.ftaa = re.findall(ftaa_pattern, result.text)[0]
@@ -57,6 +57,9 @@ class CodeforcesInteracter:
     def create_mashup(self, contest_name, problem_json, duration = 10):
         url = 'https://codeforces.com/mashup/new'
         result = self.session.get(url, headers=self.headers)
+        self.csrf_token = re.findall(csrf_token_pattern, result.text)[0]
+        self.ftaa = re.findall(ftaa_pattern, result.text)[0]
+        self.bfaa = re.findall(bfaa_pattern, result.text)[0]
         data = {
             'csrf_token': self.csrf_token,
             'ftaa': self.ftaa,
@@ -80,6 +83,9 @@ class CodeforcesInteracter:
     def add_mashup_to_group(self, mashup_id, group_id):
         url = 'https://codeforces.com/group/{0}/contests/add'.format(group_id)
         result = self.session.get(url, headers=self.headers)
+        self.csrf_token = re.findall(csrf_token_pattern, result.text)[0]
+        self.ftaa = re.findall(ftaa_pattern, result.text)[0]
+        self.bfaa = re.findall(bfaa_pattern, result.text)[0]
         data = {
             'csrf_token': self.csrf_token,
             'ftaa': self.ftaa,
@@ -98,6 +104,9 @@ class CodeforcesInteracter:
     def edit_mashup_info(self, mashup_id, contest_type, difficulty, season = ''):
         url = 'https://codeforces.com/gym/edit/' + str(mashup_id)
         result = self.session.get(url, headers = self.headers)
+        self.csrf_token = re.findall(csrf_token_pattern, result.text)[0]
+        self.ftaa = re.findall(ftaa_pattern, result.text)[0]
+        self.bfaa = re.findall(bfaa_pattern, result.text)[0]
         contest_name_pattern = r'name=["\']englishName["\'] value=["\'](.*?)["\']'
         default_name = re.findall(contest_name_pattern, result.text)[0]
         
@@ -152,3 +161,4 @@ class CodeforcesInteracter:
         }
         r = self.session.post(url, params = data, headers = self.headers)
         print(r)
+        print(r.url)

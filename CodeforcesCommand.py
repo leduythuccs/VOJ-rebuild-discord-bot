@@ -132,6 +132,7 @@ class CodeforcesCommand(commands.Cog):
             return
         if not difficulty.isdigit() or int(difficulty) < 0 or int(difficulty) > 5:
             await ctx.send('Difficulty must be a integer in [0, 5]')
+            return
         if len(season) == 0:
             season = ''
         else:
