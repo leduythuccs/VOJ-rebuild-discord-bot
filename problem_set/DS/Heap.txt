@@ -1,4 +1,4 @@
-Cây heap
+Cây Heap
 MEDIAN
 KMIN
 QBHEAP

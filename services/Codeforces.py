@@ -14,13 +14,6 @@ class CodeforcesInteracter:
             'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-CN;q=0.6',
         }
         self.login()
-        data = open(os.path.join('database', 'polygon_mapping_links.txt'), 'r', encoding='utf-8').read().strip().split('\n')
-        for i, item in enumerate(data):
-            data[i] = list(item.split(' '))
-        self.polygon_links = {}
-        for x in data:
-            link, name = x
-            self.polygon_links[name.upper().replace('-', '_')] = link
 
     def login(self):
         url = 'https://codeforces.com/enter'
