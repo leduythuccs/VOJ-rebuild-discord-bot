@@ -71,7 +71,7 @@ class RebuildCommand(commands.Cog):
             open(path, "a").write(message.strip() + '\n')
         else:
             open(path, "a").write(message.strip() + ' ')
-
+    
     def get_new_commit(self):
         current_commit_state = helper.get_commit_state(self.interator.get_problem_list())
         message = ""

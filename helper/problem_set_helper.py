@@ -13,7 +13,8 @@ def mapping_file_name():
             for y in os.listdir(path + x + '/'):
                 y = y[:y.find('.')]
                 dir_map[y.lower()] = y
-    
+    print(dir_map)
+        
 def format_name(x):
     tmp = x.lower()
     if tmp not in dir_map:
