@@ -13,6 +13,7 @@ token = os.getenv('DISCORD_TOKEN')
 bot = commands.Bot(command_prefix=';rebuild ')
 print(bot.command_prefix)
 bot.load_extension("RebuildCommand")
+bot.load_extension("CodeforcesCommand")
 bot.load_extension("BotControlCommand")
 bot.load_extension("CoronaCommand")
 @bot.event

@@ -9,6 +9,7 @@ from helper import paginator
 from helper import helper
 from helper import database
 from helper import table
+from helper import problem_set_helper
 import requests
 import time
 _FIXLATEX_WEB_ = 'https://leduythuccs.github.io/fix.html'
@@ -36,32 +37,17 @@ class RebuildCommand(commands.Cog):
 
         self.log_channel = None
         self.commit_state = None
-        self.interator = services.PolygonInteracter(username, password, api_key, api_secret)
+        self.interator = services.Polygon.PolygonInteracter(username, password, api_key, api_secret)
 
         self.problem_name_to_id = {}
         self.id_query = 0
         self.start_time = 0
-        self.dir_map = {}
         self.in_loop = False
         
         self.db = database.DataUser()
         self.db_gave = database.ProblemGave()
         self.db_reviewed = database.ProblemGave(is_review = True)
         self.db_deleted = database.DeletedProblem()
-
-    def mapping_file_name(self):
-        self.dir_map = {}
-        path = 'problem_set/'
-        for x in os.listdir(path):
-            if x.find('.') != -1:
-                x = x[:x.find('.')]
-                self.dir_map[x.lower()] = x
-            else:
-                self.dir_map[x.lower()] = x
-                for y in os.listdir(path + x + '/'):
-                    y = y[:y.find('.')]
-                    self.dir_map[y.lower()] = y
-        print(self.dir_map)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -71,7 +57,7 @@ class RebuildCommand(commands.Cog):
         self.problem_name_to_id = helper.get_problem_name_id(problem_json)
         log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
         self.log_channel = self.bot.get_channel(log_channel_id)
-        self.mapping_file_name()
+        problem_set_helper.mapping_file_name()
         #clear log
         logs = os.listdir(_LOG_PATH_)
         for log in logs:
@@ -94,10 +80,6 @@ class RebuildCommand(commands.Cog):
                 message += name + " "
                 self.commit_state[name] = current_commit_state[name]
         return message
-
-    @commands.command(brief="Update problemset.")
-    async def update(self, ctx):
-        self.mapping_file_name()
 
     @commands.command(brief="Re-login to polygon") 
     async def re_login(self, ctx):
@@ -138,56 +120,7 @@ class RebuildCommand(commands.Cog):
                     paginator.paginate(self.bot, self.log_channel, message, title)
             await asyncio.sleep(_WAIT_TIME_ * 60)
 
-    def format_name(self, x):
-        tmp = x.lower()
-        if tmp not in self.dir_map:
-            return "NULL"
-        return self.dir_map[tmp]
 
-    def format_path(self, x):
-        tmp = str(x.lower())
-        tmp.replace("//", "/")
-        tmp = '/'.join(map(lambda x: self.format_name(x), tmp.split('/')))
-        return tmp
-
-    def get_give_list(self, sets):
-        
-        problem_set = self.format_path(sets)
-
-        path = "problem_set/"
-        problems = []
-        folders = []
-        print(";" + problem_set + ";")
-        if len(sets) >= 3 and sets[-3:].upper() == "ALL" != -1:
-            if problem_set == "ALL":
-                folders = [path + self.format_name("ALL") + ".txt"]
-            else:
-                path += problem_set[:problem_set.rfind('/') + 1]
-                folders = [path + self.format_name(x[:x.find('.')]) + '.txt' for x in os.listdir(path)]
-        else:
-            folders = [path + problem_set + ".txt"]
-        print(folders)
-        files = []
-        for folder in folders:
-            if folder.find('.') != -1:
-                files.append(folder)
-            else:
-                files += os.listdir(folder)
-        print(files)
-        categories = ""
-        for f in files:
-            if (os.path.exists(f)):
-                data = list(map(lambda x: x.strip('\n'), open(f, "r", encoding='utf-8').readlines()))
-                categories += data[0] + ", "
-                problems += data[1:]
-            else:
-                problems += [sets]
-        if len(categories) >= 2:
-            categories = categories[0:-2]
-    
-        problems = list(set(problems)) # erase duplicate problems
-        print(problems)
-        return problems, categories
 
     @commands.command(brief="Get all problem sets are available.", usage="[optional: problemset_folder]")
     async def problemset(self, ctx, *args):
@@ -197,7 +130,7 @@ class RebuildCommand(commands.Cog):
             x = args[0]
             while x[-1] == '/':
                 x = x[:-1]
-            path += self.format_name(x) + '/'
+            path += problem_set_helper.format_name(x) + '/'
         print(path)
         if os.path.exists(path) == False:
             await ctx.send("Path not found")
@@ -234,8 +167,8 @@ class RebuildCommand(commands.Cog):
             type_log = _ALREADY_REVIEWED_
             data_base = self.db_reviewed
         
-        problems, categories = self.get_give_list(problem_set)
-
+        problems, categories = problem_set_helper.get_give_list(problem_set)
+        problems = list(set(problems)) # erase duplicate problems
         self.id_query += 1
 
         count_failed_problem = 0
@@ -400,7 +333,8 @@ class RebuildCommand(commands.Cog):
 
     @commands.command(brief="Get problem's info")
     async def problem_info(self, ctx, problem_set):
-        problems, categories = self.get_give_list(problem_set)
+        problems, categories = problem_set_helper.get_give_list(problem_set)
+        problems = list(set(problems)) # erase duplicate problems
         total_problem = len(problems)
         message = str(total_problem) + " problems."
         if len(categories) >= 1:
