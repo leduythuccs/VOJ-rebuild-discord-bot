@@ -26,7 +26,7 @@ class CoronaCommand(commands.Cog):
 
         typ = 'vietnam'
         if len(args) > 0:
-            x = str(arg[0]).lower()
+            x = str(args[0]).lower()
             if x == 'global':
                 typ = x
         
