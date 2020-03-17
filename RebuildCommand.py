@@ -2,7 +2,7 @@ from discord.ext import commands
 import discord
 import asyncio
 import os
-import services
+from services import Polygon
 import json 
 from datetime import datetime
 from helper import paginator
@@ -37,7 +37,8 @@ class RebuildCommand(commands.Cog):
 
         self.log_channel = None
         self.commit_state = None
-        self.interator = services.Polygon.PolygonInteracter(username, password, api_key, api_secret)
+        print(dir(services))
+        self.interator = Polygon.PolygonInteracter(username, password, api_key, api_secret)
 
         self.problem_name_to_id = {}
         self.id_query = 0

@@ -2,7 +2,7 @@ from discord.ext import commands
 import discord
 import asyncio
 import os
-import services
+from services import Codeforces
 import json 
 from datetime import datetime
 from helper import paginator
@@ -17,7 +17,7 @@ class RebuildCommand(commands.Cog):
         self.bot = bot
         username = os.getenv('CODEFORCES_USERNAME')
         password = os.getenv('CODEFORCES_PASSWORD')
-        self.interator = services.Codeforces.CodeforcesInteracter(username, password, api_key, api_secret)
+        self.interator = Codeforces.CodeforcesInteracter(username, password, api_key, api_secret)
     @commands.Cog.listener()
     async def on_ready(self):
         problem_set_helper.mapping_file_name()
@@ -28,7 +28,7 @@ class RebuildCommand(commands.Cog):
         problems, categories = problem_set_helper.get_give_list(problem_set)
         await ctx.send('This commnand is developping, pls comeback later')
         pass
-    
+
     @commands.command(brief="Re-login to codeforces") 
     async def re_login_cf(self, ctx):
         if self.interator.login():
