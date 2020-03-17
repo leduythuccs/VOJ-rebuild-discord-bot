@@ -439,7 +439,7 @@ class RebuildCommand(commands.Cog):
         if reason == '':
             reason = 'Unknow'
         self.db_deleted.set(problem_name, reason)
-        await ctx.send('Deleted ' + problem_name + '.Reason: ' + reason)
+        await ctx.send('Deleted ' + problem_name + '. Reason: ' + reason)
     
     @commands.command(brief="Get list deleted problems.")
     async def deleted_list(self, ctx):

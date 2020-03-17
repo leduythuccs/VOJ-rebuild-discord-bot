@@ -35,7 +35,7 @@ class CoronaCommand(commands.Cog):
             await ctx.send('API Failed')
             return
         await ctx.send(data[typ]['cases'] + ' cases.')
-    @commands.command(brief="Get full stastistic")
+    @commands.command(brief="Get full statistics")
     async def stats(self, ctx):
         
         data = self.get_data()
@@ -49,7 +49,7 @@ class CoronaCommand(commands.Cog):
         t += table.Data('Cases', data['vietnam']['cases'], data['global']['cases'])
         t += table.Data('Recovered', data['vietnam']['recovered'], data['global']['recovered'])
         t += table.Data('deaths', data['vietnam']['deaths'], data['global']['deaths'])
-        msg = '```\n' + str(t) + '\n```'
+        msg = "Some statistics about corona case: \n" '```\n' + str(t) + '\n```'
 
         await ctx.send(msg)
     
