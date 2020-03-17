@@ -42,13 +42,13 @@ class CoronaCommand(commands.Cog):
         if data is None:
             await ctx.send('API Failed')
             return    
-        style = table.Style('{:<}  {:<}  {:<}')
+        style = table.Style('{:<}  {:<}  {:<}   {:<}')
         t = table.Table(style)
-        t += table.Header('Corona :(', 'Vietnam', 'Global')
+        t += table.Header('Corona :(', 'Cases', 'Recovered', 'Deaths')
         t += table.Line()
-        t += table.Data('Cases', data['vietnam']['cases'], data['global']['cases'])
-        t += table.Data('Recovered', data['vietnam']['recovered'], data['global']['recovered'])
-        t += table.Data('Deaths', data['vietnam']['deaths'], data['global']['deaths'])
+        for country in data:
+            name = country[0].upper() + country[1:]
+            t += table.Data(name, data[country]['cases'], data[country]['recovered'], data[country]['deaths'])
         msg = "Some statistics about total corona virus cases: \n" '```\n' + str(t) + '\n```'
 
         await ctx.send(msg)
