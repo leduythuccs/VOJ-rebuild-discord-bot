@@ -76,6 +76,7 @@ class RebuildCommand(commands.Cog):
         logs = os.listdir(_LOG_PATH_)
         for log in logs:
             os.remove(_LOG_PATH_ + log)
+        await self.log_channel.send(f'{bot.user.name} has connected to Discord!')
     def log(self, type_log, message):
         path = _LOG_PATH_ + "{0}_{1}.txt".format(self.id_query, type_log) 
         if os.path.exists(path) == False:

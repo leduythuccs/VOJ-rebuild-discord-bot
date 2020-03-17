@@ -9,7 +9,6 @@ API_PATH = 'https://code.junookyo.xyz/api/ncov-moh/data.json'
 class CoronaCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.start_time = time.time()
 
     def get_data(self):
         r = requests.get(API_PATH).json()
