@@ -17,7 +17,7 @@ class CodeforcesCommand(commands.Cog):
         self.bot = bot
         username = os.getenv('CODEFORCES_USERNAME')
         password = os.getenv('CODEFORCES_PASSWORD')
-        self.interator = Codeforces.CodeforcesInteracter(username, password, api_key, api_secret)
+        self.interator = Codeforces.CodeforcesInteracter(username, password)
     @commands.Cog.listener()
     async def on_ready(self):
         problem_set_helper.mapping_file_name()
