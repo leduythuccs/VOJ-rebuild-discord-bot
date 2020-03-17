@@ -57,7 +57,7 @@ class CodeforcesCommand(commands.Cog):
             cur_char = chr(ord(cur_char) + 1)
         msg = '```\n' + str(t) + '\n```'
         return msg
-    @commands.command(brief="Create a mashup by problemset", usage="[Contest name] [problem_set] [duration]")
+    @commands.command(brief="Create a mashup by problemset", usage="[problem_set] [duration]")
     @commands.is_owner()
     async def create_mashup(self, ctx, problem_set, duration):
         problems, categories = self.helper.get_give_list(problem_set)
@@ -69,6 +69,10 @@ class CodeforcesCommand(commands.Cog):
         if problem_json is None:
             await ctx.send('Error: ' + err)
             return
+        print(contest_name)
+        print(problem_json)
+        await ctx.send('developing, pls return later')
+        return
         res, contest_id = self.interator.create_mashup(contest_name, problem_json, duration)
         if not res:
             ctx.send('Error when interactive with CF: ' + str(contest_id))
