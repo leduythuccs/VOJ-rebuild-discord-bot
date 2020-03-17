@@ -37,7 +37,6 @@ class RebuildCommand(commands.Cog):
 
         self.log_channel = None
         self.commit_state = None
-        print(dir(services))
         self.interator = Polygon.PolygonInteracter(username, password, api_key, api_secret)
 
         self.problem_name_to_id = {}
