@@ -25,19 +25,7 @@ _TITLE_MAP_ = {
     _ALREADY_REVIEWED_ : "List problem already review: "
 }
 _WHITE_LIST_USER_NAME_ = ['leduykhongngu', 'tuvietthao', 'MLGuy', 'codeforces']
-class Database:
-    def __init__(self):
-        self.file_path = 'database/user_database.json'
-        with open(self.file_path, "r") as json_file: self.cur = json.load(json_file)
 
-    def load(self):
-        with open(self.file_path, "r") as json_file: self.cur = json.load(json_file)
-
-    def set(self, id_discord, username_polygon):
-        self.load()
-        if id_discord in self.cur:
-            self.cur.pop(id_discord)
-    
 class RebuildCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -148,18 +136,6 @@ class RebuildCommand(commands.Cog):
                 else:
                     paginator.paginate(self.bot, self.log_channel, message, title)
             await asyncio.sleep(_WAIT_TIME_ * 60)
-
-    @commands.command(brief="Check if bot is still alive. Also prints bot uptime")
-    async def ping(self, ctx):
-        await ctx.send("I have been running for " + 
-                        helper.pretty_time_format(time.time() - self.start_time))
-
-    @commands.command(brief="Kill bot. [owner's command]")
-    @commands.is_owner()
-    async def kill(self, ctx):
-        """Kill bot"""
-        await ctx.send("Dying")
-        exit(0)
 
     def format_name(self, x):
         tmp = x.lower()

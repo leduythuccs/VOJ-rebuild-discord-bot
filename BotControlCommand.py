@@ -56,6 +56,7 @@ class BotControlCommand(commands.Cog):
         """Kill bot"""
         await ctx.send("Dying")
         exit(0)
+    
     @commands.command(brief='Restart bot')
     @commands.is_owner()
     async def restart(self, ctx):
