@@ -33,7 +33,7 @@ class CodeforcesCommand(commands.Cog):
     #     problem_set_helper.mapping_file_name()
     def get_polygon_link(self, problem_names, err):
         problem_json = []
-        for p in lists:
+        for p in problem_names:
             p = p.upper().replace('-', '_')
             if p not in self.polygon_links:
                 print(p + ' not found')
