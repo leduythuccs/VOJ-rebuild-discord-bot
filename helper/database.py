@@ -72,6 +72,7 @@ class ProblemGave:
     def set(self, problem_name, username_polygon):
         cur = self.load()
         problem_name = format_name(problem_name)
+        cur[problem_name] = username_polygon
         self.save(cur)
     
     def get(self, problem_name):
