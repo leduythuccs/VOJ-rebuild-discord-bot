@@ -75,3 +75,16 @@ class CodeforcesInteracter:
             return True, self.get_last_contest()
         open('err_mashup.txt', 'a', encoding='utf-8').write(str(r) + '\n')
         return False, str(r)
+    def add_mashup_to_group(self, mashup_id, group_id):
+        url = 'https://codeforces.com/group/{0}/contests/add'.format(group_id)
+        data = {
+            'action' : 'addContest',
+            'contestId' : mashup_id
+        }
+        r = self.session.post(url, params = data, headers = self.headers)
+        # checking ok
+        url = 'https://codeforces.com/group/{0}/contest/'.format(group_id) + str(mashup_id)
+        r = self.session.get(url, headers = self.headers, allow_redirects = False)
+        if r.status_code == 200:
+            return url
+        return None

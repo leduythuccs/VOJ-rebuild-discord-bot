@@ -17,7 +17,7 @@ class CodeforcesCommand(commands.Cog):
         self.bot = bot
         username = os.getenv('CODEFORCES_USERNAME')
         password = os.getenv('CODEFORCES_PASSWORD')
-        
+        self.group_id = os.getenv('CODEFORCES_GROUP_ID')
         self.helper = problem_set_helper.problem_set_helper()
         self.interator = Codeforces.CodeforcesInteracter(username, password)
         data = open(os.path.join('database', 'polygon_mapping_links.txt'), 'r', encoding='utf-8').read().strip().split('\n')
@@ -78,6 +78,23 @@ class CodeforcesCommand(commands.Cog):
         message = 'Mashup name = ' + contest_name + '.\nMashup id = ' + str(contest_id) + '.\n'
         message += 'Please add those links to admin sheet:' + self.get_link_codeforces(problems, contest_id) 
         await ctx.send(message)
+    
+    @commands.command(brief="Add a mashup to VNOI CF group")
+    @commands.is_owner()
+    async def add_contest(self, ctx, mashup_id):
+        if not mashup_id.isdigit():
+            await ctx.send('Mashup id must be a number.')
+            return
+        if self.group_id is None:
+            await ctx.send('Codeforces group id not found.')
+            return
+        url = self.interator.add_mashup_to_group(mashup_id, self.group_id)
+        if url == None:
+            message = "Cannot add {0} to VNOI CF group."
+        else:
+            message = "Contest link: " + url
+        await ctx.send(message)
+    
     @commands.command(brief="Re-login to codeforces") 
     async def re_login_cf(self, ctx):
         if self.interator.login():
