@@ -13,16 +13,17 @@ def mapping_file_name():
             for y in os.listdir(path + x + '/'):
                 y = y[:y.find('.')]
                 dir_map[y.lower()] = y
-    print(dir_map)
-        
+
 def format_name(x):
     tmp = x.lower()
+    print('name ' + tmp)
     if tmp not in dir_map:
         return "NULL"
     return dir_map[tmp]
 
 def format_path(x):
     tmp = str(x.lower())
+    print(tmp)
     tmp.replace("//", "/")
     tmp = '/'.join(map(lambda x: format_name(x), tmp.split('/')))
     return tmp
