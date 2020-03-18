@@ -100,39 +100,41 @@ class CodeforcesCommand(commands.Cog):
             return
         print(contest_name)
         print(problem_json)
+        current_message = await ctx.send("Creating mashup " + contest_name)
         res, contest_id = self.interator.create_mashup(contest_name, problem_json, duration)
         if not res:
-            ctx.send('Error when interactive with CF: ' + str(contest_id))
-            return
+            await current_message.edit(content='Error when interact with CF: ' + str(contest_id))
+            return False
         message = 'Mashup name = ' + contest_name + '.\nMashup id = ' + str(contest_id) + '.\n'
         message += 'Please add those links to admin sheet:' + self.get_link_codeforces(problems, contest_id) 
-        await ctx.send(message)
+        await current_message.edit(content = message)
+        return contest_id
     
     @commands.command(brief="Add a mashup to VNOI CF group")
     @commands.is_owner()
     async def add_contest(self, ctx, mashup_id):
         if not mashup_id.isdigit():
             await ctx.send('Mashup id must be a number.')
-            return
+            return False
         if self.group_id is None:
             await ctx.send('Codeforces group id not found.')
-            return
+            return False
         url = self.interator.add_mashup_to_group(mashup_id, self.group_id)
         if url == None:
             message = "Cannot add {0} to VNOI CF group.".format(mashup_id)
         else:
             message = "Contest link: " + url
         await ctx.send(message)
-    
+        return True
     @commands.command(brief="Edit mashup info")
     @commands.is_owner()
     async def edit_info_mashup(self, ctx, mashup_id, contest_type, difficulty, *season):
         if not mashup_id.isdigit():
             await ctx.send('Mashup id must be a number.')
-            return
+            return False
         if not difficulty.isdigit() or int(difficulty) < 0 or int(difficulty) > 5:
             await ctx.send('Difficulty must be a integer in [0, 5]')
-            return
+            return False
         if len(season) == 0:
             season = ''
         else:
@@ -140,10 +142,30 @@ class CodeforcesCommand(commands.Cog):
             if season not in seasons:
                 await ctx.send('Season {0} not found.'.format(season))
         if contest_type != 'IOI' and contest_type != 'ICPC':
-            await ctx.send("Contest type must be `IOI` or `ICPC`")
-            return
+            await ctx.send("Contest type must be `IOI` or `ICPC`.")
+            return False
+        prefix = 'Editing:\n'
+        message = '- Contest id: {0}.\n- Contest type: {1}.\n\
+            - Difficulty: {2} stars.\n- Season: {3}.\n'.format(mashup_id, contest_type, difficulty, season)
+        current_message = await ctx.send(prefix + message)
         self.interator.edit_mashup_info(mashup_id, contest_type, difficulty, season)
-        await ctx.send('Done. Please check the result, the bot cannot confirm it.')
+        suffix = 'Done. Please check the result, the bot cannot confirm it.'
+        await current_message.edit(content= message + suffix)
+        return True
+    @commands.command(brief="Create mashup and add it to VNOI CF group")
+    @commands.is_owner()
+    async def full_create_mashup(self, ctx, problem_set, duration, contest_type, difficulty, *season):
+        mashup_id = await self.create_mashup(ctx, problem_set, duration)
+        if mashup_id == False:
+            return False
+        if len(season) == 0:
+            season = ''
+        result = await self.edit_info_mashup(ctx, mashup_id, contest_type, difficulty, season)
+        if result == False:
+            return False
+        result = await self.add_contest(ctx, mashup_id)
+
+        return result
 
     @commands.command(brief="Re-login to codeforces") 
     async def re_login_cf(self, ctx):
