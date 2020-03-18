@@ -146,9 +146,9 @@ class CodeforcesCommand(commands.Cog):
             return False
         prefix = 'Editing:\n'
         message = '- Contest id: {0}.\n- Contest type: {1}.\n\
-            - Difficulty: {2} stars.\n- Season: {3}.\n'.format(mashup_id, contest_type, difficulty, season)
+        - Difficulty: {2} stars.\n- Season: {3}.\n'.format(mashup_id, contest_type, difficulty, season)
         current_message = await ctx.send(prefix + message)
-        self.interator.edit_mashup_info(mashup_id, contest_type, difficulty, season)
+        self.interator.edit_mashup_info(str(mashup_id), contest_type, str(difficulty), season)
         suffix = 'Done. Please check the result, the bot cannot confirm it.'
         await current_message.edit(content= message + suffix)
         return True
@@ -160,10 +160,10 @@ class CodeforcesCommand(commands.Cog):
             return False
         if len(season) == 0:
             season = ''
-        result = await self.edit_info_mashup(ctx, mashup_id, contest_type, difficulty, season)
+        result = await self.edit_info_mashup(ctx, str(mashup_id), contest_type, difficulty, season)
         if result == False:
             return False
-        result = await self.add_contest(ctx, mashup_id)
+        result = await self.add_contest(ctx, str(mashup_id))
 
         return result
 
