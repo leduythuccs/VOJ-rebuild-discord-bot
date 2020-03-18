@@ -56,8 +56,7 @@ class DeletedProblem:
     def restore(self, problem_name):
         cur = self.load()
         problem_name = format_name(problem_name)
-        if problem_name in cur:
-            cur.remove(problem_name)
+        cur.pop(problem_name, None)
         self.save(cur)
         
     def list(self):
