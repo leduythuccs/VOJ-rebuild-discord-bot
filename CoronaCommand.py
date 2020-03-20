@@ -44,11 +44,11 @@ class CoronaCommand(commands.Cog):
             pre_deaths = 0
         msg = ""
         if (pre_cases != nxt_cases):
-            msg += '- {0} more new cases (from {1} to {2}).\n'.format(nxt_cases - pre_cases, pre_cases, nxt_cases)
+            msg += '- {0} new cases (from {1} to {2}).\n'.format(nxt_cases - pre_cases, pre_cases, nxt_cases)
         if (pre_recovered != nxt_recovered):
-            msg += '- {0} more new recovered (from {1} to {2}).\n'.format(nxt_recovered - pre_recovered, pre_recovered, nxt_recovered)
+            msg += '- {0} new recovered (from {1} to {2}).\n'.format(nxt_recovered - pre_recovered, pre_recovered, nxt_recovered)
         if (pre_deaths != nxt_deaths):
-            msg += '- {0} more new deaths (from {1} to {2})\n.'.format(nxt_deaths - pre_deaths, pre_deaths, nxt_deaths)
+            msg += '- {0} new deaths (from {1} to {2})\n.'.format(nxt_deaths - pre_deaths, pre_deaths, nxt_deaths)
         if len(msg) == 0:
             return
         self.cur = nxt
