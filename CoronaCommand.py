@@ -25,7 +25,10 @@ class CoronaCommand(commands.Cog):
     # async def on_ready(self):
     #     log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
     #     self.log_channel = self.bot.get_channel(log_channel_id)
-
+    def current_time(self):
+        loc_dt = pytz.utc.localize(datetime.utcnow())
+        VNM_dt = loc_dt.astimezone(pytz.timezone('Asia/Saigon'))
+        VNM_dt.strftime('%H:%M:%S %d-%m-%Y')
     @tasks.loop(minutes=10.0)
     async def looper(self):
         self.index += 1
@@ -33,9 +36,6 @@ class CoronaCommand(commands.Cog):
         nxt = self.get_data()
         if nxt is None:
             return
-        VNM = pytz.timezone('Asia/Saigon')
-        loc_dt = pytz.utc.localize(datetime.utcnow())
-        VNM_dt = loc_dt.astimezone(VNM)
         pre_cases = int(self.cur['vietnam']['cases'])
         nxt_cases = int(nxt['vietnam']['cases'])
         pre_recovered = int(self.cur['vietnam']['recovered'])
@@ -57,8 +57,7 @@ class CoronaCommand(commands.Cog):
             return
         self.cur = nxt
         msg = "Vietnam just has:\n" + msg
-        
-        msg = "Current time: " + VNM_dt.strftime('%H:%M:%S %Y-%m-%d')  + '\n' + msg
+        msg = "Current time: " + self.current_time()  + '\n' + msg
         await self.log_channel.send(msg)
 
     @looper.before_loop
@@ -97,7 +96,7 @@ class CoronaCommand(commands.Cog):
         for country in data:
             name = country[0].upper() + country[1:]
             t += table.Data(name, data[country]['cases'], data[country]['recovered'], data[country]['deaths'])
-        msg = "Some statistics about total corona virus cases: \n" '```\n' + str(t) + '\n```'
+        msg = "Some statistics about total corona virus cases: \n" + "Current time: " + self.current_time() +  '```\n' + str(t) + '\n```'
 
         await ctx.send(msg)
     
