@@ -28,7 +28,7 @@ class CoronaCommand(commands.Cog):
     def current_time(self):
         loc_dt = pytz.utc.localize(datetime.utcnow())
         VNM_dt = loc_dt.astimezone(pytz.timezone('Asia/Saigon'))
-        VNM_dt.strftime('%H:%M:%S %d-%m-%Y')
+        return VNM_dt.strftime('%H:%M:%S %d-%m-%Y')
     @tasks.loop(minutes=10.0)
     async def looper(self):
         self.index += 1
