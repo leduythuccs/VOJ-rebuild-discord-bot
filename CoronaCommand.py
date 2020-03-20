@@ -11,7 +11,7 @@ class CoronaCommand(commands.Cog):
         self.bot = bot
         self.log_channel = None
         self.cur = None
-        self.looper().start()
+        self.looper.start()
 
     def get_data(self):
         r = requests.get(API_PATH).json()
@@ -24,7 +24,7 @@ class CoronaCommand(commands.Cog):
     #     log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
     #     self.log_channel = self.bot.get_channel(log_channel_id)
 
-    @tasks.loop(minutes=5.0)
+    @tasks.loop(minutes=10.0)
     async def looper(self):
         print("looping")
         nxt = self.get_data()
@@ -52,9 +52,11 @@ class CoronaCommand(commands.Cog):
 
     @looper.before_loop
     async def before_looper(self):
+        await self.bot.wait_until_ready()
         log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
         self.log_channel = self.bot.get_channel(log_channel_id)
         self.cur = self.get_data()
+
     @commands.command(brief='Get cases in Vietnam or Global', usage="case [optional: global]")
     async def cases(self, ctx, *args):
         """ Get total cases had corona virus in Vietnam or global, default = Vietnam"""
