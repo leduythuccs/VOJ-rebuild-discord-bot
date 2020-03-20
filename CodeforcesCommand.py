@@ -138,6 +138,8 @@ class CodeforcesCommand(commands.Cog):
         if len(season) == 0:
             season = ''
         else:
+            if type(season[0]) is tuple:
+                season = season[0]
             season = '-'.join(season)
             if season not in seasons:
                 await ctx.send('Season {0} not found.'.format(season))
