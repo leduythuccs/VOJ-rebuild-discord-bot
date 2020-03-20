@@ -4,7 +4,8 @@ import asyncio
 import os
 import requests
 from helper import table
-
+from datetime import datetime
+import pytz
 API_PATH = 'https://code.junookyo.xyz/api/ncov-moh/data.json'
 class CoronaCommand(commands.Cog):
     def __init__(self, bot):
@@ -32,6 +33,9 @@ class CoronaCommand(commands.Cog):
         nxt = self.get_data()
         if nxt is None:
             return
+        VNM = pytz.timezone('Asia/Saigon')
+        loc_dt = pytz.utc.localize(datetime.utcnow())
+        VNM_dt = loc_dt.astimezone(VNM)
         pre_cases = int(self.cur['vietnam']['cases'])
         nxt_cases = int(nxt['vietnam']['cases'])
         pre_recovered = int(self.cur['vietnam']['recovered'])
@@ -53,6 +57,8 @@ class CoronaCommand(commands.Cog):
             return
         self.cur = nxt
         msg = "Vietnam just has:\n" + msg
+        
+        msg = "Current time: " + VNM_dt.strftime('%H:%M:%S %Y-%m-%d')  + '\n' + msg
         await self.log_channel.send(msg)
 
     @looper.before_loop
