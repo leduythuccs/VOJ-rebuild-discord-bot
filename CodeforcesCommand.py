@@ -107,7 +107,6 @@ class CodeforcesCommand(commands.Cog):
             print(str(contest_id))
             return False
         message = 'Mashup name = ' + contest_name + '.\nMashup id = ' + str(contest_id) + '.\n'
-        message += 'Please add those links to admin sheet:' + self.get_link_codeforces(problems, contest_id) 
         await current_message.edit(content = message)
         return contest_id
     
@@ -148,8 +147,7 @@ class CodeforcesCommand(commands.Cog):
             await ctx.send("Contest type must be `IOI` or `ICPC`.")
             return False
         prefix = 'Editing:\n'
-        message = '- Contest id: {0}.\n- Contest type: {1}.\n\
-        - Difficulty: {2} stars.\n- Season: {3}.\n'.format(mashup_id, contest_type, difficulty, season)
+        message = '- Contest id: {0}.\n- Contest type: {1}.\n - Difficulty: {2} stars.\n- Season: {3}.\n'.format(mashup_id, contest_type, difficulty, season)
         current_message = await ctx.send(prefix + message)
         self.interator.edit_mashup_info(str(mashup_id), contest_type, str(difficulty), season)
         suffix = 'Done. Please check the result, the bot cannot confirm it.'
