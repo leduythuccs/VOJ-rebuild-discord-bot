@@ -103,7 +103,8 @@ class CodeforcesCommand(commands.Cog):
         current_message = await ctx.send("Creating mashup " + contest_name)
         res, contest_id = self.interator.create_mashup(contest_name, problem_json, duration)
         if not res:
-            await current_message.edit(content='Error when interact with CF: ' + str(contest_id))
+            await current_message.edit(content='Error when interact with CF. Please see local log file.')
+            print(str(contest_id))
             return False
         message = 'Mashup name = ' + contest_name + '.\nMashup id = ' + str(contest_id) + '.\n'
         message += 'Please add those links to admin sheet:' + self.get_link_codeforces(problems, contest_id) 
