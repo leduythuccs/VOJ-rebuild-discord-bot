@@ -67,7 +67,7 @@ class CoronaCommand(commands.Cog):
         self.log_channel = self.bot.get_channel(log_channel_id)
         self.cur = self.get_data()
 
-    @commands.command(brief='Get cases in Vietnam or Global', usage="case [optional: global]")
+    @commands.command(brief='Get cases in Vietnam or Global', usage="[optional: global]")
     async def cases(self, ctx, *args):
         """ Get total cases had corona virus in Vietnam or global, default = Vietnam"""
 
@@ -76,6 +76,10 @@ class CoronaCommand(commands.Cog):
             x = str(args[0]).lower()
             if x == 'global':
                 typ = x
+            else:
+                if x != 'vietnam':
+                    await ctx.send('Nani, i dont understand.')
+                    return
         
         data = self.get_data()
         if data is None:
