@@ -169,6 +169,7 @@ class CodeforcesCommand(commands.Cog):
         return result
 
     @commands.command(brief="Re-login to codeforces") 
+    @commands.is_owner()
     async def re_login_cf(self, ctx):
         if self.interator.login():
             await ctx.send('VOJ-BOT logged to codeforces')

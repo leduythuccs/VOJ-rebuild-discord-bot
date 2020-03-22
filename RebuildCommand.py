@@ -82,20 +82,21 @@ class RebuildCommand(commands.Cog):
         return message
 
     @commands.command(brief="Re-login to polygon") 
+    @commands.is_owner()
     async def re_login(self, ctx):
         if self.interator.login():
             await ctx.send('VOJ-BOT logged to polygon')
         else:
             await ctx.send('Failed')
 
-    @commands.command(brief="Change log channel. [owner's command]")
+    @commands.command(brief="Change log channel.")
     @commands.is_owner()
     async def change_log(self, ctx):
         """Change bot's log channel to this channel""" 
         self.log_channel = ctx.channel
         await ctx.send("Successfully set log channel to " + ctx.channel.name)
         
-    @commands.command(brief="Get new commit each minute. [owner's command]")
+    @commands.command(brief="Get new commit each minute.")
     @commands.is_owner()
     async def loop(self, ctx):
         if (self.log_channel is None):
@@ -217,12 +218,12 @@ class RebuildCommand(commands.Cog):
             message += "\nPlease checkout " + _FIXLATEX_WEB_ + " to quick fix latex."
         await current_message.edit(content=message.strip())
 
-    @commands.command(brief="Give permission access. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
+    @commands.command(brief="Give permission access.", usage="[problems] [username1] [username2] [username3] ...")
     @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
     async def give(self, ctx, problem_set, *args):
         """Give permission access of problem(s),
         Currently, "problems" can be: a single name or a problem set.
-        [owner's command]
+       
         """
         usernames = self.get_usernames(args)
         print(usernames)
@@ -231,12 +232,12 @@ class RebuildCommand(commands.Cog):
             return
         await self.give_access(ctx, problem_set, usernames)
 
-    @commands.command(brief="Force give permission access. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
+    @commands.command(brief="Force give permission access.", usage="[problems] [username1] [username2] [username3] ...")
     @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
     async def _give(self, ctx, problem_set, *args):
         """Give permission access of problem(s),
         Currently, "problems" can be: a single name or a problem set.
-        [owner's command]
+       
         """
         usernames = self.get_usernames(args)
         print(usernames)
@@ -245,12 +246,12 @@ class RebuildCommand(commands.Cog):
             return
         await self.give_access(ctx, problem_set, usernames, force = True)
     
-    @commands.command(brief="Give permission access to reviewers. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
+    @commands.command(brief="Give permission access to reviewers.", usage="[problems] [username1] [username2] [username3] ...")
     @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
     async def review(self, ctx, problem_set, *args):
         """Give permission access of problem(s) to reviewers,
         Currently, "problems" can be: a single name or a problem set.
-        [owner's command]
+       
         """
         usernames = self.get_usernames(args)
         print(usernames)
@@ -259,12 +260,12 @@ class RebuildCommand(commands.Cog):
             return
         await self.give_access(ctx, problem_set, usernames, is_review=True)
 
-    @commands.command(brief="Force give permission access to reviewers. [owner's command]", usage="[problems] [username1] [username2] [username3] ...")
+    @commands.command(brief="Force give permission access to reviewers.", usage="[problems] [username1] [username2] [username3] ...")
     @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
     async def _review(self, ctx, problem_set, *args):
         """Give permission access of problem(s) to reviewers,
         Currently, "problems" can be: a single name or a problem set.
-        [owner's command]
+       
         """
         usernames = self.get_usernames(args)
         print(usernames)
@@ -293,6 +294,7 @@ class RebuildCommand(commands.Cog):
             await ctx.send("Query not found")
 
     @commands.command(brief="Set polygon username of a user")
+    @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
     async def set(self, ctx, member: discord.Member, polygon_username: str):
         self.db.set(member.id, polygon_username)
         roles = ctx.channel.guild.roles
