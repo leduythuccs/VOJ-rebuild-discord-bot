@@ -1,4 +1,4 @@
-Các bài không có tag set 6
+Các bài hidden set 6
 FLOWPOT
 TOURS
 KDICT
