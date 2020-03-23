@@ -2,3 +2,4 @@ Cây Heap
 MEDIAN
 KMIN
 QBHEAP
+HEAP1
