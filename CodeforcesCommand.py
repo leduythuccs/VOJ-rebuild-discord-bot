@@ -171,7 +171,7 @@ class CodeforcesCommand(commands.Cog):
         result = await self.edit_info_mashup(ctx, str(mashup_id), contest_type, difficulty, season)
         if result == False:
             return False
-        await self.submit_solutions(ctx, mashup_id)
+        await self.submit_solutions(ctx, str(mashup_id))
         result = await self.add_contest(ctx, str(mashup_id))
         return result
 
