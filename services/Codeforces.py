@@ -101,6 +101,21 @@ class CodeforcesInteracter:
         r = self.session.get(url, headers = self.headers, allow_redirects = False)
         if r.status_code == 200:
             return url
+    def submit_package_solutions(self, mashup_id):
+        url = 'https://codeforces.com/gym/{0}'.format(mashup_id)
+        result = self.session.get(url, headers=self.headers)
+        self.csrf_token = re.findall(csrf_token_pattern, result.text)[0]
+        self.ftaa = re.findall(ftaa_pattern, result.text)[0]
+        self.bfaa = re.findall(bfaa_pattern, result.text)[0]
+        data = {
+            'csrf_token': self.csrf_token,
+            'ftaa': self.ftaa,
+            'bfaa': self.bfaa,
+            '_tta': 377
+        }
+        r = self.session.post(url + '/submitPackageSolutionsPage', params = data, headers = self.headers)
+        print(r.text)
+        return 
     def edit_mashup_info(self, mashup_id, contest_type, difficulty, season = ''):
         url = 'https://codeforces.com/gym/edit/' + str(mashup_id)
         result = self.session.get(url, headers = self.headers)

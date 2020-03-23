@@ -153,6 +153,13 @@ class CodeforcesCommand(commands.Cog):
         suffix = 'Done. Please check the result, the bot cannot confirm it.'
         await current_message.edit(content= message + suffix)
         return True
+    @commands.command(brief="Submit package solutions")
+    @commands.is_owner()
+    async def submit_solutions(self, ctx, mashup_id):
+        if not mashup_id.isdigit():
+            await ctx.send('Mashup id must be a number.')
+            return False
+        self.interator.submit_package_solutions(mashup_id)
     @commands.command(brief="Create mashup and add it to VNOI CF group")
     @commands.is_owner()
     async def full_create_mashup(self, ctx, problem_set, duration, contest_type, difficulty, *season):
@@ -164,8 +171,8 @@ class CodeforcesCommand(commands.Cog):
         result = await self.edit_info_mashup(ctx, str(mashup_id), contest_type, difficulty, season)
         if result == False:
             return False
+        await self.submit_solutions(ctx, mashup_id)
         result = await self.add_contest(ctx, str(mashup_id))
-
         return result
 
     @commands.command(brief="Re-login to codeforces") 
