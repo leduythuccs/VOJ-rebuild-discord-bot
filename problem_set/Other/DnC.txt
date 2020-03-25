@@ -1,4 +1,4 @@
-Divide & Conquer (Chia để trị)
+Divide n Conquer (Chia để trị)
 COIN34
 POWER
 VECTOR
