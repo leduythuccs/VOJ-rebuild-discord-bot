@@ -1,8 +1,0 @@
-Các bài tính AC không có tag set 28
-WELL2
-WINSTRAT
-WORD01
-WORDCNT
-WS
-XOR
-YUGI

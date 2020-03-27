@@ -1,7 +1,6 @@
-Các bài OI không có tag set 1
+Các bài OI không có tag set 01
 ACMNB
 ADBRACK
-AIRCTRL
 ALLOW
 AMSSEQ
 ANT
@@ -9,3 +8,4 @@ ASSASSIN
 AUCTION
 AVLBIT
 BCHESS
+BEADSNB
