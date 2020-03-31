@@ -1387,3 +1387,6 @@ https://polygon.codeforces.com/p35Gf1M/tuvietthao/voj-nkgame NKGAME
 https://polygon.codeforces.com/p9KEo8g/tuvietthao/voj-luythua2 LUYTHUA2
 https://polygon.codeforces.com/p22FciR/tuvietthao/voj-adwfnsnw ADWFNSNW
 https://polygon.codeforces.com/p5M7fR5/tuvietthao/voj-findnum FINDNUM
+https://polygon.codeforces.com/p9kYAru/leduykhongngu/voj-con CON
+https://polygon.codeforces.com/p9Ylsuz/leduykhongngu/voj-eq EQ
+https://polygon.codeforces.com/p4Qr6MK/leduykhongngu/voj-ct CT
