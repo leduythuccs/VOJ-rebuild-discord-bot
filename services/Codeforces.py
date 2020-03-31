@@ -155,7 +155,7 @@ class CodeforcesInteracter:
             'allowedSelfRegistration': 'on',
             'allowedViewForNonRegistered': 'on',
             'allowedCommonStatus': 'on',
-            'viewTestdataPolicy': 'NONE',
+            'viewTestdataPolicy': 'OWN_FAILED',
             'submitViewPolicy': 'NONE',
             'languages': 'true',
             'allowedStatements': 'on',

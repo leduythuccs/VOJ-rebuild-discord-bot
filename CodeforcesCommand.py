@@ -147,7 +147,7 @@ class CodeforcesCommand(commands.Cog):
             await ctx.send("Contest type must be `IOI` or `ICPC`.")
             return False
         prefix = 'Editing:\n'
-        message = '- Contest id: {0}.\n- Contest type: {1}.\n - Difficulty: {2} stars.\n- Season: {3}.\n'.format(mashup_id, contest_type, difficulty, season)
+        message = '- Contest id: {0}.\n- Contest type: {1}.\n- Difficulty: {2} stars.\n- Season: {3}.\n'.format(mashup_id, contest_type, difficulty, season)
         current_message = await ctx.send(prefix + message)
         self.interator.edit_mashup_info(str(mashup_id), contest_type, str(difficulty), season)
         suffix = 'Done. Please check the result, the bot cannot confirm it.'
