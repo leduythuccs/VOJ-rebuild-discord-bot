@@ -1,4 +1,4 @@
-Các bài tính AC set 15
+ACM set 15
 QBSTAR
 QBSTOCK
 QBSTR

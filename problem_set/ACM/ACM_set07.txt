@@ -1,4 +1,4 @@
-Các bài tính AC set 07
+ACM set 07
 HUGEKNAP
 ILSMATH
 ILSMATH2

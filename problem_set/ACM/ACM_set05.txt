@@ -1,4 +1,4 @@
-Các bài tính AC set 05
+ACM set 05
 ENET
 EQ
 EQSTR
