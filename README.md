@@ -29,7 +29,7 @@ Clone this repository
 - Use `;rebuild help` to see list command
 
 ## Notes
-- There is some commands required `Admin` role. If you a not bot's owner, you will need `Admin` role to use those commands.
+- There is some commands required `Admin` role. If you're not bot's owner, you will need `Admin` role to use those commands.
 - You can update the bot (get new commit from this repository) by using `;rebuild git_pull` command. Then you can use `;rebuild restart` to restart the bot (you don't need to run it again, it's very useful since I'm running the bot in a VPS).
 
 ## About the APIs
