@@ -91,6 +91,12 @@ class CodeforcesCommand(commands.Cog):
     async def create_mashup(self, ctx, problem_set, duration):
         problems, categories = self.helper.get_give_list(problem_set)
         # remove deleted problem
+        deleted = ""
+        for p in problems:
+            if self.db_deleted.is_deleted(x):
+                deleted += p + " "
+        if deleted != "":
+            await ctx.send("Deleted: " + deleted)
         problems = list(filter(lambda x: not self.db_deleted.is_deleted(x), problems))
         contest_name = categories.strip()
         err = ''
