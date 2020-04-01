@@ -13,7 +13,6 @@ from helper import problem_set_helper
 import requests
 import time
 _FIXLATEX_WEB_ = 'https://leduythuccs.github.io/fix.html'
-_WAIT_TIME_ = 1 #minute
 _LOG_PATH_ = 'botlogs/'
 _NOT_FOUND_ = 0
 _INTERACTION_FAILED_ = 1
@@ -37,12 +36,10 @@ class RebuildCommand(commands.Cog):
 
         self.log_channel = None
         self.commit_state = None
-        self.interator = Polygon.PolygonInteracter(username, password, api_key, api_secret)
+        self.interator = Polygon.PolygonInteractor(username, password, api_key, api_secret)
 
         self.problem_name_to_id = {}
         self.id_query = 0
-        self.start_time = 0
-        self.in_loop = False
         
         self.helper = problem_set_helper.problem_set_helper()
         self.db = database.DataUser()
@@ -52,17 +49,18 @@ class RebuildCommand(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.start_time = time.time()
         problem_json = self.interator.get_problem_list()
-        self.commit_state = helper.get_commit_state(problem_json)
         self.problem_name_to_id = helper.get_problem_name_id(problem_json)
-        log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
+
+        log_channel_id = int(os.getenv('DISCORD_LOG_CHANNEL_ID'))
         self.log_channel = self.bot.get_channel(log_channel_id)
+
         #clear log
         logs = os.listdir(_LOG_PATH_)
         for log in logs:
             os.remove(_LOG_PATH_ + log)
         await self.log_channel.send(f'{self.bot.user.name} has connected to Discord!')
+
     def log(self, type_log, message):
         path = _LOG_PATH_ + "{0}_{1}.txt".format(self.id_query, type_log) 
         if os.path.exists(path) == False:
@@ -71,15 +69,6 @@ class RebuildCommand(commands.Cog):
             open(path, "a").write(message.strip() + '\n')
         else:
             open(path, "a").write(message.strip() + ' ')
-
-    def get_new_commit(self):
-        current_commit_state = helper.get_commit_state(self.interator.get_problem_list())
-        message = ""
-        for name in self.commit_state:
-            if (current_commit_state[name] != self.commit_state[name]):
-                message += name + " "
-                self.commit_state[name] = current_commit_state[name]
-        return message
 
     @commands.command(brief="Re-login to polygon") 
     @commands.is_owner()
@@ -95,33 +84,6 @@ class RebuildCommand(commands.Cog):
         """Change bot's log channel to this channel""" 
         self.log_channel = ctx.channel
         await ctx.send("Successfully set log channel to " + ctx.channel.name)
-        
-    @commands.command(brief="Get new commit each minute.")
-    @commands.is_owner()
-    async def loop(self, ctx):
-        if (self.log_channel is None):
-            await ctx.send("Log channel not found.")
-            return 
-        if (self.in_loop):
-            await ctx.send("Already loop")
-            return
-        await self.log_channel.send("Starting to get new commit every minute.")
-        self.in_loop = True
-        while True:
-            message = self.get_new_commit()
-            now = datetime.now()
-            current_time = now.strftime("%Hh:%Mm:%Ss")
-            if (len(message) > 0):
-                title = current_time + ": In past " + str(_WAIT_TIME_)  \
-                        + "minute(s), these problem(s) has new commit: "
-                if len(message) < 1000:
-                    message = title + "`" + message + "`"
-                    await self.log_channel.send(message)
-                else:
-                    paginator.paginate(self.bot, self.log_channel, message, title)
-            await asyncio.sleep(_WAIT_TIME_ * 60)
-
-
 
     @commands.command(brief="Get all problem sets are available.", usage="[optional: problemset_folder]")
     async def problemset(self, ctx, *args):
@@ -145,6 +107,7 @@ class RebuildCommand(commands.Cog):
                 message += p + "/ "
         message += "`"
         await ctx.send(message)
+    
     def get_usernames(self, args):
         print(args)
         usernames = []
@@ -157,6 +120,7 @@ class RebuildCommand(commands.Cog):
                     continue
             usernames.append(arg)
         return usernames
+    
     async def give_access(self, ctx, problem_set, usernames, force = False, is_review=False):
         non_white_list_username = usernames
         if not is_review:
@@ -169,7 +133,8 @@ class RebuildCommand(commands.Cog):
             data_base = self.db_reviewed
         
         problems, categories = self.helper.get_give_list(problem_set)
-        problems = list(set(problems)) # erase duplicate problems
+        # erase duplicate problems
+        problems = list(set(problems)) 
         self.id_query += 1
 
         count_failed_problem = 0
@@ -178,6 +143,7 @@ class RebuildCommand(commands.Cog):
         if len(categories) >= 1:
             message = "Categories: " + categories + ". " + message
         await ctx.send(message)
+
         current_message = await ctx.send("0/" + str(total_problem))
         count_done = 0
         succeed_problems = []
@@ -188,11 +154,13 @@ class RebuildCommand(commands.Cog):
                 count_failed_problem += 1
                 self.log(type_log = _NOT_FOUND_, message = p)
             else:
+                #problem is already gave
                 user = data_base.get(p)
                 if (user is not None) and (not force) and (len(non_white_list_username) != 0):
                     count_failed_problem += 1
                     self.log(type_log = type_log, message = p[4:] + ' ' + user + '\n')
                     continue
+                #fail when interact with polygon, mostly because it was gave to that user.
                 problem_id = self.problem_name_to_id[p]
                 if self.interator.give_access(problem_id, usernames, True) == False:
                     count_failed_problem += 1
@@ -200,11 +168,14 @@ class RebuildCommand(commands.Cog):
                     if is_review and (len(non_white_list_username) != 0):
                         data_base.set(p, str(non_white_list_username))
                 else:
+                    #success
                     succeed_problems.append(p[4:])
                     if len(non_white_list_username) != 0:
                         data_base.set(p, str(non_white_list_username))
+            #update status to discord every 5 iterates 
             if (count_done % 5 == 0):
                 await current_message.edit(content=str(count_done) + "/" + str(total_problem) + "\nSuccess: " + str(count_done - count_failed_problem))
+
         message = ""
         if len(succeed_problems) != 0:
             message = "Successfully gave {0} problems ({2}) to `{1}`".format(len(succeed_problems), usernames, ' '.join(succeed_problems))
@@ -274,7 +245,7 @@ class RebuildCommand(commands.Cog):
             return
         await self.give_access(ctx, problem_set, usernames, is_review=True, force = True)
     
-    @commands.command(brief="Get log of give access query.", usage="[queryid]")
+    @commands.command(brief="Get log of give access query.", usage="[query id]")
     async def get_log(self, ctx, query_id):
         """Get failed problems from log file of given id"""
         found = False
@@ -293,8 +264,8 @@ class RebuildCommand(commands.Cog):
         if not found:
             await ctx.send("Query not found")
 
-    @commands.command(brief="Set polygon username of a user")
-    @commands.check_any(commands.is_owner(),commands.has_role('Admin'))
+    @commands.command(brief="Set polygon username to a user")
+    @commands.check_any(commands.is_owner(), commands.has_role('Admin'))
     async def set(self, ctx, member: discord.Member, polygon_username: str):
         self.db.set(member.id, polygon_username)
         roles = ctx.channel.guild.roles
@@ -368,7 +339,7 @@ class RebuildCommand(commands.Cog):
 
         await ctx.send(msg)
 
-    @commands.command(brief="Delete a problems.")
+    @commands.command(brief="Delete a problem.")
     @commands.is_owner()
     async def delete(self, ctx, problem_name, *args):
         reason = ' '.join(map(str, args))
@@ -376,7 +347,8 @@ class RebuildCommand(commands.Cog):
             reason = 'Unknow'
         self.db_deleted.set(problem_name, reason)
         await ctx.send('Deleted ' + problem_name + '. Reason: ' + reason)
-    @commands.command(brief="Restore a deleted problems.")
+    
+    @commands.command(brief="Restore a deleted problem.")
     @commands.is_owner()
     async def restore(self, ctx, problem_name):
         self.db_deleted.restore(problem_name)
@@ -395,7 +367,6 @@ class RebuildCommand(commands.Cog):
         msg = '```\n' + str(t) + '\n```'
 
         await ctx.send(msg)
-
 
 def setup(bot):
     bot.add_cog(RebuildCommand(bot))

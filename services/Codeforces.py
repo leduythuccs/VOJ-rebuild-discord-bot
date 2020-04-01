@@ -5,7 +5,7 @@ import os
 csrf_token_pattern = r'name=["\']csrf_token["\'] value=["\'](.*?)["\']'
 ftaa_pattern = r'window._ftaa = ["\'](.*?)["\']'
 bfaa_pattern = r'window._bfaa = ["\'](.*?)["\']'
-class CodeforcesInteracter:
+class CodeforcesInteractor:
     def __init__(self, username, password):
         self.username = username
         self.password = password

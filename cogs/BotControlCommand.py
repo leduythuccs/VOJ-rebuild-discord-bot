@@ -46,12 +46,12 @@ class BotControlCommand(commands.Cog):
     # async def on_ready(self):
     #     pass
 
-    @commands.command(brief="Check if bot is still alive. Also prints bot uptime")
+    @commands.command(brief="Check if bot is still alive. Also prints bot uptime.")
     async def ping(self, ctx):
         await ctx.send("I have been running for " + 
                         helper.pretty_time_format(time.time() - self.start_time))
 
-    @commands.command(brief="Kill bot. [owner's command]")
+    @commands.command(brief="Kill bot. ")
     @commands.is_owner()
     async def kill(self, ctx):
         """Kill bot"""

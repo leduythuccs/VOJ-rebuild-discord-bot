@@ -12,10 +12,10 @@ token = os.getenv('DISCORD_TOKEN')
 # bot 
 bot = commands.Bot(command_prefix=';rebuild ')
 print(bot.command_prefix)
-bot.load_extension("RebuildCommand")
-bot.load_extension("CodeforcesCommand")
-bot.load_extension("BotControlCommand")
-bot.load_extension("CoronaCommand")
+bot.load_extension("cogs.RebuildCommand")
+bot.load_extension("cogs.CodeforcesCommand")
+bot.load_extension("cogs.BotControlCommand")
+bot.load_extension("cogs.CoronaCommand")
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')

@@ -23,7 +23,7 @@ class CoronaCommand(commands.Cog):
  
     # @commands.Cog.listener()
     # async def on_ready(self):
-    #     log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
+    #     log_channel_id = int(os.getenv('DISCORD_LOG_CHANNEL_ID'))
     #     self.log_channel = self.bot.get_channel(log_channel_id)
     def current_time(self):
         loc_dt = pytz.utc.localize(datetime.utcnow())
@@ -63,7 +63,7 @@ class CoronaCommand(commands.Cog):
     @looper.before_loop
     async def before_looper(self):
         await self.bot.wait_until_ready()
-        log_channel_id = int(os.getenv('DICORD_LOG_CHANNEL_ID'))
+        log_channel_id = int(os.getenv('DISCORD_LOG_CHANNEL_ID'))
         self.log_channel = self.bot.get_channel(log_channel_id)
         self.cur = self.get_data()
 

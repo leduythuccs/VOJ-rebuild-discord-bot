@@ -3,7 +3,7 @@ from urllib.parse import urlparse, parse_qs
 
 BASE_URL = 'https://polygon.codeforces.com'
 
-class PolygonInteracter:
+class PolygonInteractor:
     def __init__(self, username, password, api_key, api_secret):
         self.username = username
         self.password = password
@@ -108,5 +108,3 @@ class PolygonInteracter:
 
         r = self.request_unofficial('access', data=data, params={'action': 'add'}, method='POST')
         return 'location' in r.headers and 'access' in r.headers['location']
-
-    

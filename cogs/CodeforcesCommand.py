@@ -48,15 +48,17 @@ class CodeforcesCommand(commands.Cog):
         password = os.getenv('CODEFORCES_PASSWORD')
         self.group_id = os.getenv('CODEFORCES_GROUP_ID')
         self.helper = problem_set_helper.problem_set_helper()
-        self.interator = Codeforces.CodeforcesInteracter(username, password)
+        self.interator = Codeforces.CodeforcesInteractor(username, password)
+        self.db_deleted = database.DeletedProblem()
+
         data = open(os.path.join('database', 'polygon_mapping_links.txt'), 'r', encoding='utf-8').read().strip().split('\n')
         for i, item in enumerate(data):
             data[i] = list(item.split(' '))
         self.polygon_links = {}
-        self.db_deleted = database.DeletedProblem()
         for x in data:
             link, name = x
             self.polygon_links[name.upper().replace('-', '_')] = link
+
     # @commands.Cog.listener()
     # async def on_ready(self):
     #     problem_set_helper.mapping_file_name()
@@ -71,6 +73,7 @@ class CodeforcesCommand(commands.Cog):
         if err != '':
             return None
         return problem_json
+
     def get_link_codeforces(self, problems, mashup_id):
         cur = self.db_deleted.list()
         style = table.Style('{:<}  {:<}')
@@ -86,17 +89,19 @@ class CodeforcesCommand(commands.Cog):
             cur_char = chr(ord(cur_char) + 1)
         msg = '```\n' + str(t) + '\n```'
         return msg
+
     @commands.command(brief="Create a mashup by problemset", usage="[problem_set] [duration]")
     @commands.is_owner()
     async def create_mashup(self, ctx, problem_set, duration):
         problems, categories = self.helper.get_give_list(problem_set)
-        # remove deleted problem
+        #print deleted problems
         deleted = ""
         for p in problems:
             if self.db_deleted.is_deleted(x):
                 deleted += p + " "
         if deleted != "":
             await ctx.send("Deleted: " + deleted)
+        # remove deleted problems
         problems = list(filter(lambda x: not self.db_deleted.is_deleted(x), problems))
         contest_name = categories.strip()
         err = ''
@@ -132,6 +137,7 @@ class CodeforcesCommand(commands.Cog):
             message = "Contest link: " + url
         await ctx.send(message)
         return True
+
     @commands.command(brief="Edit mashup info")
     @commands.is_owner()
     async def edit_info_mashup(self, ctx, mashup_id, contest_type, difficulty, *season):
@@ -159,6 +165,7 @@ class CodeforcesCommand(commands.Cog):
         suffix = 'Done. Please check the result, the bot cannot confirm it.'
         await current_message.edit(content= message + suffix)
         return True
+
     @commands.command(brief="Submit package solutions")
     @commands.is_owner()
     async def submit_solutions(self, ctx, mashup_id):
@@ -166,6 +173,7 @@ class CodeforcesCommand(commands.Cog):
             await ctx.send('Mashup id must be a number.')
             return False
         self.interator.submit_package_solutions(mashup_id)
+
     @commands.command(brief="Create mashup and add it to VNOI CF group")
     @commands.is_owner()
     async def full_create_mashup(self, ctx, problem_set, duration, contest_type, difficulty, *season):
