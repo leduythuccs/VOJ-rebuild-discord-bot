@@ -9,7 +9,7 @@ if (os.path.exists("botlogs") == False):
     os.mkdir("botlogs")
 token = os.getenv('DISCORD_TOKEN')
 
-# bot 
+# bot
 bot = commands.Bot(command_prefix=';rebuild ')
 print(bot.command_prefix)
 bot.load_extension("cogs.RebuildCommand")
@@ -20,10 +20,10 @@ bot.load_extension("cogs.CoronaCommand")
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
-    
+
 @bot.event
 async def on_command_error(ctx, error):
     print(error)
     await ctx.send('Error: ' + str(error))
-    
+
 bot.run(token)

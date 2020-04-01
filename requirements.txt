@@ -2,3 +2,4 @@ requests
 python-dotenv
 discord
 asyncio
+pytz

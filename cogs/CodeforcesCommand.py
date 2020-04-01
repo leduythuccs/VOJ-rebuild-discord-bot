@@ -3,7 +3,7 @@ import discord
 import asyncio
 import os
 from services import Codeforces
-import json 
+import json
 from datetime import datetime
 from helper import paginator
 from helper import helper
@@ -41,6 +41,8 @@ seasons = {
     '1995-1996',
     '1991-1992'
 }
+
+
 class CodeforcesCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -51,7 +53,8 @@ class CodeforcesCommand(commands.Cog):
         self.interator = Codeforces.CodeforcesInteractor(username, password)
         self.db_deleted = database.DeletedProblem()
 
-        data = open(os.path.join('database', 'polygon_mapping_links.txt'), 'r', encoding='utf-8').read().strip().split('\n')
+        data = open(os.path.join('database', 'polygon_mapping_links.txt'),
+                    'r', encoding='utf-8').read().strip().split('\n')
         for i, item in enumerate(data):
             data[i] = list(item.split(' '))
         self.polygon_links = {}
@@ -69,7 +72,7 @@ class CodeforcesCommand(commands.Cog):
             if p not in self.polygon_links:
                 print(p + ' not found')
                 err += p + ' not found.\n'
-            problem_json.append({'url' : self.polygon_links[p]})
+            problem_json.append({'url': self.polygon_links[p]})
         if err != '':
             return None
         return problem_json
@@ -94,7 +97,7 @@ class CodeforcesCommand(commands.Cog):
     @commands.is_owner()
     async def create_mashup(self, ctx, problem_set, duration):
         problems, categories = self.helper.get_give_list(problem_set)
-        #print deleted problems
+        # print deleted problems
         deleted = ""
         for p in problems:
             if self.db_deleted.is_deleted(x):
@@ -102,7 +105,8 @@ class CodeforcesCommand(commands.Cog):
         if deleted != "":
             await ctx.send("Deleted: " + deleted)
         # remove deleted problems
-        problems = list(filter(lambda x: not self.db_deleted.is_deleted(x), problems))
+        problems = list(
+            filter(lambda x: not self.db_deleted.is_deleted(x), problems))
         contest_name = categories.strip()
         err = ''
         problem_json = self.get_polygon_link(problems, err)
@@ -112,15 +116,17 @@ class CodeforcesCommand(commands.Cog):
         print(contest_name)
         print(problem_json)
         current_message = await ctx.send("Creating mashup " + contest_name)
-        res, contest_id = self.interator.create_mashup(contest_name, problem_json, duration)
+        res, contest_id = self.interator.create_mashup(
+            contest_name, problem_json, duration)
         if not res:
             await current_message.edit(content='Error when interact with CF. Please see local log file.')
             print(str(contest_id))
             return False
-        message = 'Mashup name = ' + contest_name + '.\nMashup id = ' + str(contest_id) + '.\n'
-        await current_message.edit(content = message)
+        message = 'Mashup name = ' + contest_name + \
+            '.\nMashup id = ' + str(contest_id) + '.\n'
+        await current_message.edit(content=message)
         return contest_id
-    
+
     @commands.command(brief="Add a mashup to VNOI CF group")
     @commands.is_owner()
     async def add_contest(self, ctx, mashup_id):
@@ -159,11 +165,13 @@ class CodeforcesCommand(commands.Cog):
             await ctx.send("Contest type must be `IOI` or `ICPC`.")
             return False
         prefix = 'Editing:\n'
-        message = '- Contest id: {0}.\n- Contest type: {1}.\n- Difficulty: {2} stars.\n- Season: {3}.\n'.format(mashup_id, contest_type, difficulty, season)
+        message = '- Contest id: {0}.\n- Contest type: {1}.\n- Difficulty: {2} stars.\n- Season: {3}.\n'.format(
+            mashup_id, contest_type, difficulty, season)
         current_message = await ctx.send(prefix + message)
-        self.interator.edit_mashup_info(str(mashup_id), contest_type, str(difficulty), season)
+        self.interator.edit_mashup_info(
+            str(mashup_id), contest_type, str(difficulty), season)
         suffix = 'Done. Please check the result, the bot cannot confirm it.'
-        await current_message.edit(content= message + suffix)
+        await current_message.edit(content=message + suffix)
         return True
 
     @commands.command(brief="Submit package solutions")
@@ -189,13 +197,14 @@ class CodeforcesCommand(commands.Cog):
         result = await self.add_contest(ctx, str(mashup_id))
         return result
 
-    @commands.command(brief="Re-login to codeforces") 
+    @commands.command(brief="Re-login to codeforces")
     @commands.is_owner()
     async def re_login_cf(self, ctx):
         if self.interator.login():
             await ctx.send('VOJ-BOT logged to codeforces')
         else:
             await ctx.send('Failed')
+
 
 def setup(bot):
     bot.add_cog(CodeforcesCommand(bot))

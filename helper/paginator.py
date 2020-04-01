@@ -9,7 +9,8 @@ _REACT_NEXT = '\N{BLACK RIGHT-POINTING TRIANGLE}'
 _REACT_LAST = '\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}'
 
 _CHARS_PER_PAGE = 1500
-_PAGINATE_WAIT_TIME = 1 * 60 # 1 minute
+_PAGINATE_WAIT_TIME = 1 * 60  # 1 minute
+
 
 def chunkify(sequence, chunk_size):
     """Utility method to split a sequence into fixed size chunks."""
@@ -78,6 +79,7 @@ class Paginated:
                 await self.message.clear_reactions()
                 break
 
+
 def make_pages(message, title):
     chunks = chunkify(message, _CHARS_PER_PAGE)
     pages = []
@@ -86,6 +88,7 @@ def make_pages(message, title):
         embed = discord.Embed(description=chunk)
         pages.append((title, embed))
     return pages
+
 
 def paginate(bot, channel, message, title):
     pages = make_pages(message, title)

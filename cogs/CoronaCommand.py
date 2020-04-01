@@ -7,6 +7,8 @@ from helper import table
 from datetime import datetime
 import pytz
 API_PATH = 'https://code.junookyo.xyz/api/ncov-moh/data.json'
+
+
 class CoronaCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -20,7 +22,7 @@ class CoronaCommand(commands.Cog):
         if not("success" in r and r["success"] == True):
             return None
         return r["data"]
- 
+
     # @commands.Cog.listener()
     # async def on_ready(self):
     #     log_channel_id = int(os.getenv('DISCORD_LOG_CHANNEL_ID'))
@@ -29,6 +31,7 @@ class CoronaCommand(commands.Cog):
         loc_dt = pytz.utc.localize(datetime.utcnow())
         VNM_dt = loc_dt.astimezone(pytz.timezone('Asia/Saigon'))
         return VNM_dt.strftime('%H:%M:%S %d-%m-%Y')
+
     @tasks.loop(minutes=10.0)
     async def looper(self):
         self.index += 1
@@ -48,16 +51,19 @@ class CoronaCommand(commands.Cog):
             pre_deaths = 0
         msg = ""
         if (pre_cases != nxt_cases):
-            msg += '- {0} new cases (from {1} to {2}).\n'.format(nxt_cases - pre_cases, pre_cases, nxt_cases)
+            msg += '- {0} new cases (from {1} to {2}).\n'.format(
+                nxt_cases - pre_cases, pre_cases, nxt_cases)
         if (pre_recovered != nxt_recovered):
-            msg += '- {0} new recovered (from {1} to {2}).\n'.format(nxt_recovered - pre_recovered, pre_recovered, nxt_recovered)
+            msg += '- {0} new recovered (from {1} to {2}).\n'.format(
+                nxt_recovered - pre_recovered, pre_recovered, nxt_recovered)
         if (pre_deaths != nxt_deaths):
-            msg += '- {0} new deaths (from {1} to {2})\n.'.format(nxt_deaths - pre_deaths, pre_deaths, nxt_deaths)
+            msg += '- {0} new deaths (from {1} to {2})\n.'.format(
+                nxt_deaths - pre_deaths, pre_deaths, nxt_deaths)
         if len(msg) == 0:
             return
         self.cur = nxt
         msg = "Vietnam just has:\n" + msg
-        msg = "Current time: " + self.current_time()  + '\n' + msg
+        msg = "Current time: " + self.current_time() + '\n' + msg
         await self.log_channel.send(msg)
 
     @looper.before_loop
@@ -80,29 +86,33 @@ class CoronaCommand(commands.Cog):
                 if x != 'vietnam':
                     await ctx.send('Nani, i dont understand.')
                     return
-        
+
         data = self.get_data()
         if data is None:
             await ctx.send('API Failed')
             return
         await ctx.send(data[typ]['cases'] + ' cases.')
+
     @commands.command(brief="Get full statistics")
     async def stats(self, ctx):
-        
+
         data = self.get_data()
         if data is None:
             await ctx.send('API Failed')
-            return    
+            return
         style = table.Style('{:<}  {:<}  {:<}   {:<}')
         t = table.Table(style)
         t += table.Header('Corona :(', 'Cases', 'Recovered', 'Deaths')
         t += table.Line()
         for country in data:
             name = country[0].upper() + country[1:]
-            t += table.Data(name, data[country]['cases'], data[country]['recovered'], data[country]['deaths'])
-        msg = "Some statistics about total corona virus cases: \n" + "Current time: " + self.current_time() +  '```\n' + str(t) + '\n```'
+            t += table.Data(name, data[country]['cases'],
+                            data[country]['recovered'], data[country]['deaths'])
+        msg = "Some statistics about total corona virus cases: \n" + \
+            "Current time: " + self.current_time() + '```\n' + str(t) + '\n```'
 
         await ctx.send(msg)
-    
+
+
 def setup(bot):
     bot.add_cog(CoronaCommand(bot))
