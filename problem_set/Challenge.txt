@@ -1,4 +1,4 @@
-Các bài Challenge
+Challenge
 TORCH
 FARMING
 BPAINT
