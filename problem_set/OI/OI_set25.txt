@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 25
+OI set 25
 VOSNSEQ
 VOSNUM
 VOSPLAY

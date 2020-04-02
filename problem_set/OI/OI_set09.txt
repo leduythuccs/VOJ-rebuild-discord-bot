@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 09
+OI set 9
 LCS2X
 LEM
 LEM1

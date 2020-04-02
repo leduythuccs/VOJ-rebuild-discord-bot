@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 13
+OI set 13
 NKPALIN
 NKPANO
 NKPARITY

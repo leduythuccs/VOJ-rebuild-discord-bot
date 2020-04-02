@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 18
+OI set 18
 SWAPB
 TAMCAM
 TAXID

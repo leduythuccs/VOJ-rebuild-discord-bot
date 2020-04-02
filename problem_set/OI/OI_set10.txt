@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 10
+OI set 10
 MAKHOA
 MARBLE
 MARS

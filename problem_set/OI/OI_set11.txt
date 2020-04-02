@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 11
+OI set 11
 NCOB
 NDCCARD
 NDIGIT

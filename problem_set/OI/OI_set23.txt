@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 23
+OI set 23
 VMYT
 VNABOR
 VNBRACK

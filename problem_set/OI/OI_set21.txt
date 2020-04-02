@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 21
+OI set 21
 VMELLIP
 VMEMPIRE
 VMFOUR

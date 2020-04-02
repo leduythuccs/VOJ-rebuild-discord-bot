@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 14
+OI set 14
 NORMA
 NOTE
 NRS

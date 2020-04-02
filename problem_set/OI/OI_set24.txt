@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 24
+OI set 24
 VOHAUCAN
 VOIEXAM
 VOITSORT

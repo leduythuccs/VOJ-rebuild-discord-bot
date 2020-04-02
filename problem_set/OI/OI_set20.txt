@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 20
+OI set 20
 VCRISIS
 VDANGER
 VKNIGHTS

@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 17
+OI set 17
 SAILS
 SALESMAN
 SBOOST

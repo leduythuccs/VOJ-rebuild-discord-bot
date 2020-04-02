@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 22
+OI set 22
 VMRESTO
 VMROOK
 VMROPES

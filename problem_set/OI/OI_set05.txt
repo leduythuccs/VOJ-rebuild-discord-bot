@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 05
+OI set 5
 CSTARS
 CTF
 CTNBULLS

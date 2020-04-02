@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 26
+OI set 26
 VTRI2
 VWORDPOW
 VWORDS

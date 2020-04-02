@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 16
+OI set 16
 QOS
 QTBIT
 QTMOVE

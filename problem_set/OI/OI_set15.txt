@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 15
+OI set 15
 PLACE
 POINTS2
 POOL

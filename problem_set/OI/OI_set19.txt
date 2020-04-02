@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 19
+OI set 19
 TRIBE
 TRILAND
 TRIPHP

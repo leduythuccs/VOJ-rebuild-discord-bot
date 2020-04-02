@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 07
+OI set 7
 GARDEN25
 GOHOME
 GPMB

@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 06
+OI set 6
 DIFFSTR
 DIGIT
 DIGIT0

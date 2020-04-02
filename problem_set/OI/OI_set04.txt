@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 04
+OI set 4
 C11TRCNT
 C11WATER
 C11XOA

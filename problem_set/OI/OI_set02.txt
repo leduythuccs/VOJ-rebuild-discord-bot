@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 02
+OI set 2
 BINTREE
 BLAND
 BOB

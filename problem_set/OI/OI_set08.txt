@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 08
+OI set 8
 KAMION
 KAMP
 KANDP

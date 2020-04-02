@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 03
+OI set 3
 C11GAR
 C11GENIE
 C11ID

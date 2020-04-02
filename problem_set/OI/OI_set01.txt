@@ -1,4 +1,4 @@
-Các bài chấm điểm OI set 01
+OI set 1
 ACMNB
 ADBRACK
 AIRCTRL
