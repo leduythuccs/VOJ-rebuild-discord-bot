@@ -100,7 +100,7 @@ class CodeforcesCommand(commands.Cog):
         # print deleted problems
         deleted = ""
         for p in problems:
-            if self.db_deleted.is_deleted(x):
+            if self.db_deleted.is_deleted(p):
                 deleted += p + " "
         if deleted != "":
             await ctx.send("Deleted: " + deleted)
