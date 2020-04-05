@@ -1390,3 +1390,4 @@ https://polygon.codeforces.com/p5M7fR5/tuvietthao/voj-findnum FINDNUM
 https://polygon.codeforces.com/p9kYAru/leduykhongngu/voj-con CON
 https://polygon.codeforces.com/p9Ylsuz/leduykhongngu/voj-eq EQ
 https://polygon.codeforces.com/p4Qr6MK/leduykhongngu/voj-ct CT
+https://polygon.codeforces.com/p9EMpsE/leduykhongngu/voj-bic BIC
